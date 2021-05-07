@@ -23,6 +23,17 @@ type Config struct {
 		WriteTimeout       time.Duration `yaml:"write-timeout" envconfig:"HTTP_WRITE_TIMEOUT"`
 		MaxHeaderMegabytes int           `yaml:"max-header-megabytes" envconfig:"HTTP_MAX_HEADER_MEGABYTES"`
 	} `yaml:"http"`
+
+	Mongo struct {
+		URI string `yaml:"uri" envconfig:"MONGO_URI"`
+		User string `yaml:"user" envconfig:"MONGO_USER"`
+		Password string `yaml:"password" envconfig:"MONGO_PASSWORD"`
+		Name string `yaml:"name" envconfig:"MONGO_NAME"`
+	} `yaml:"mongo"`
+
+	Auth struct {
+		PasswordSalt string `yaml:"password-salt" envconfig:"AUTH_PASSWORD_SALT"`
+	}
 }
 
 func LoadConfig(configPath string) *Config {
