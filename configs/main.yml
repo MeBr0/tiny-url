@@ -1,0 +1,8 @@
+log:
+  level: INFO
+
+http:
+  port: 8080
+  read-timeout: 10s
+  write-timeout: 10s
+  max-header-megabytes: 1
