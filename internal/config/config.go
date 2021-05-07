@@ -33,7 +33,10 @@ type Config struct {
 
 	Auth struct {
 		PasswordSalt string `yaml:"password-salt" envconfig:"AUTH_PASSWORD_SALT"`
-	}
+		JWT struct {
+			Key string `yaml:"key" envconfig:"AUTH_JWT_KEY"`
+		} `yaml:"jwt"`
+	} `yaml:"auth"`
 }
 
 func LoadConfig(configPath string) *Config {

@@ -10,6 +10,7 @@ import (
 type Users interface {
 	List(ctx context.Context) ([]domain.User, error)
 	Create(ctx context.Context, user domain.User) (primitive.ObjectID, error)
+	GetByCredentials(ctx context.Context, email, password string) (domain.User, error)
 }
 
 type Repos struct {

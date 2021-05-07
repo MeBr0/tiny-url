@@ -8,6 +8,7 @@ import (
 	"github.com/mebr0/tiny-url/internal/repo"
 	"github.com/mebr0/tiny-url/internal/server"
 	"github.com/mebr0/tiny-url/internal/service"
+	"github.com/mebr0/tiny-url/pkg/auth"
 	"github.com/mebr0/tiny-url/pkg/database/mongodb"
 	"github.com/mebr0/tiny-url/pkg/hash"
 	log "github.com/sirupsen/logrus"
@@ -34,9 +35,16 @@ func Run(configPath string) {
 
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 
+	tokenManager, err := auth.NewManager(cfg.Auth.JWT.Key)
+
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
 	// Init handlers
 	repos := repo.NewRepos(db)
-	services := service.NewServices(repos, hasher)
+	services := service.NewServices(repos, hasher, tokenManager)
 	handlers := handler.NewHandler(services)
 
 	// HTTP Server
