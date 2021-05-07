@@ -6,3 +6,7 @@ http:
   read-timeout: 10s
   write-timeout: 10s
   max-header-megabytes: 1
+
+mongo:
+  uri: mongodb://localhost:27017
+  name: tiny_url
