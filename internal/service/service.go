@@ -6,6 +6,7 @@ import (
 	"github.com/mebr0/tiny-url/internal/repo"
 	"github.com/mebr0/tiny-url/pkg/auth"
 	"github.com/mebr0/tiny-url/pkg/hash"
+	"time"
 )
 
 type Users interface {
@@ -22,9 +23,9 @@ type Services struct {
 	Auth
 }
 
-func NewServices(repos *repo.Repos, hasher hash.PasswordHasher, tokenManager auth.TokenManager) *Services {
+func NewServices(repos *repo.Repos, hasher hash.PasswordHasher, tokenManager auth.TokenManager, accessTokenTTL time.Duration) *Services {
 	return &Services{
 		Users: newUsersService(repos.Users),
-		Auth: newAuthService(repos.Users, hasher, tokenManager),
+		Auth: newAuthService(repos.Users, hasher, tokenManager, accessTokenTTL),
 	}
 }

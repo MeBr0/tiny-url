@@ -32,6 +32,7 @@ type Config struct {
 	} `yaml:"mongo"`
 
 	Auth struct {
+		AccessTokenTTL time.Duration `yaml:"access-token-ttl" envconfig:"AUTH_ACCESS_TOKEN_TTL"`
 		PasswordSalt string `yaml:"password-salt" envconfig:"AUTH_PASSWORD_SALT"`
 		JWT struct {
 			Key string `yaml:"key" envconfig:"AUTH_JWT_KEY"`

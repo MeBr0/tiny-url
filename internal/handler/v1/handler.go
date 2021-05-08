@@ -3,15 +3,18 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/mebr0/tiny-url/internal/service"
+	"github.com/mebr0/tiny-url/pkg/auth"
 )
 
 type Handler struct {
 	services *service.Services
+	tokenManager auth.TokenManager
 }
 
-func NewHandler(services *service.Services) *Handler {
+func NewHandler(services *service.Services, tokenManager auth.TokenManager) *Handler {
 	return &Handler{
 		services: services,
+		tokenManager: tokenManager,
 	}
 }
 
@@ -21,6 +24,6 @@ func (h *Handler) Init(api *gin.RouterGroup) {
 		h.initUsersRoutes(v1)
 		h.initAuthRoutes(v1)
 
-		v1.GET("/ping", h.ping)
+		v1.GET("/ping", h.userIdentity, h.ping)
 	}
 }

@@ -14,13 +14,16 @@ type AuthService struct {
 	repo repo.Users
 	hasher hash.PasswordHasher
 	tokenManager auth.TokenManager
+	accessTokenTTL time.Duration
 }
 
-func newAuthService(repo repo.Users, hasher hash.PasswordHasher, tokenManager auth.TokenManager) *AuthService {
+func newAuthService(repo repo.Users, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
+	accessTokenTTL time.Duration) *AuthService {
 	return &AuthService{
 		repo: repo,
 		hasher: hasher,
 		tokenManager: tokenManager,
+		accessTokenTTL: accessTokenTTL,
 	}
 }
 
@@ -64,7 +67,7 @@ func (s *AuthService) createSession(ctx context.Context, userId primitive.Object
 	var res domain.Tokens
 	var err error
 
-	res.AccessToken, err = s.tokenManager.NewJWT(userId.Hex(), time.Duration(10))
+	res.AccessToken, err = s.tokenManager.NewJWT(userId.Hex(), s.accessTokenTTL)
 
 	return res, err
 }
