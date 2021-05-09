@@ -11,18 +11,18 @@ import (
 )
 
 type AuthService struct {
-	repo repo.Users
-	hasher hash.PasswordHasher
-	tokenManager auth.TokenManager
+	repo           repo.Users
+	hasher         hash.PasswordHasher
+	tokenManager   auth.TokenManager
 	accessTokenTTL time.Duration
 }
 
 func newAuthService(repo repo.Users, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
 	accessTokenTTL time.Duration) *AuthService {
 	return &AuthService{
-		repo: repo,
-		hasher: hasher,
-		tokenManager: tokenManager,
+		repo:           repo,
+		hasher:         hasher,
+		tokenManager:   tokenManager,
 		accessTokenTTL: accessTokenTTL,
 	}
 }

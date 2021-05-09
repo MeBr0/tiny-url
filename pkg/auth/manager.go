@@ -27,7 +27,6 @@ func NewManager(signingKey string) (*Manager, error) {
 	}, nil
 }
 
-
 func (m *Manager) NewJWT(userId string, ttl time.Duration) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		ExpiresAt: time.Now().Add(ttl).Unix(),

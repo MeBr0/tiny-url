@@ -13,12 +13,20 @@ type Users interface {
 	GetByCredentials(ctx context.Context, email, password string) (domain.User, error)
 }
 
+type URLs interface {
+	ListByOwner(ctx context.Context, userId primitive.ObjectID) ([]domain.URL, error)
+	Create(ctx context.Context, url domain.URL) (string, error)
+	Get(ctx context.Context, alias string) (domain.URL, error)
+}
+
 type Repos struct {
 	Users Users
+	URLs  URLs
 }
 
 func NewRepos(db *mongo.Database) *Repos {
 	return &Repos{
 		Users: newUsersRepo(db),
+		URLs:  newURLsRepo(db),
 	}
 }

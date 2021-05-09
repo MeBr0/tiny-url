@@ -7,13 +7,13 @@ import (
 )
 
 type Handler struct {
-	services *service.Services
+	services     *service.Services
 	tokenManager auth.TokenManager
 }
 
 func NewHandler(services *service.Services, tokenManager auth.TokenManager) *Handler {
 	return &Handler{
-		services: services,
+		services:     services,
 		tokenManager: tokenManager,
 	}
 }
@@ -23,6 +23,8 @@ func (h *Handler) Init(api *gin.RouterGroup) {
 	{
 		h.initUsersRoutes(v1)
 		h.initAuthRoutes(v1)
+		h.initURLsRoutes(v1)
+		h.initRedirectRoutes(v1)
 
 		v1.GET("/ping", h.userIdentity, h.ping)
 	}

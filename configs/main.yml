@@ -10,3 +10,6 @@ http:
 mongo:
   uri: mongodb://localhost:27017
   name: tiny_url
+
+auth:
+  access-token-ttl: 10m

@@ -9,13 +9,13 @@ import (
 )
 
 type Handler struct {
-	services *service.Services
+	services     *service.Services
 	tokenManager auth.TokenManager
 }
 
 func NewHandler(services *service.Services, tokenManager auth.TokenManager) *Handler {
 	return &Handler{
-		services: services,
+		services:     services,
 		tokenManager: tokenManager,
 	}
 }

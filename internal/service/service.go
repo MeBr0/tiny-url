@@ -6,6 +6,7 @@ import (
 	"github.com/mebr0/tiny-url/internal/repo"
 	"github.com/mebr0/tiny-url/pkg/auth"
 	"github.com/mebr0/tiny-url/pkg/hash"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
 
@@ -18,14 +19,23 @@ type Auth interface {
 	Login(ctx context.Context, toLogin domain.UserLogin) (domain.Tokens, error)
 }
 
+type URLs interface {
+	ListByOwner(ctx context.Context, userId primitive.ObjectID) ([]domain.URL, error)
+	Create(ctx context.Context, toCreate domain.URLCreate) (domain.URL, error)
+	Get(ctx context.Context, alias string) (domain.URL, error)
+}
+
 type Services struct {
 	Users
 	Auth
+	URLs
 }
 
-func NewServices(repos *repo.Repos, hasher hash.PasswordHasher, tokenManager auth.TokenManager, accessTokenTTL time.Duration) *Services {
+func NewServices(repos *repo.Repos, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
+	urlEncoder hash.URLEncoder, accessTokenTTL time.Duration) *Services {
 	return &Services{
 		Users: newUsersService(repos.Users),
-		Auth: newAuthService(repos.Users, hasher, tokenManager, accessTokenTTL),
+		Auth:  newAuthService(repos.Users, hasher, tokenManager, accessTokenTTL),
+		URLs:  newURLsService(repos.URLs, urlEncoder),
 	}
 }
