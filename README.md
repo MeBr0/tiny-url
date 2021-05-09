@@ -11,3 +11,7 @@ Run `go build cmd/app/main.go` for building project
 ## Run
 
 Run built binary with `./main`
+
+## Format
+
+Before any commit run `gofmt -s -w .` for formatting whole project

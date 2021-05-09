@@ -5,15 +5,18 @@ import (
 	"github.com/mebr0/tiny-url/internal/config"
 	v1 "github.com/mebr0/tiny-url/internal/handler/v1"
 	"github.com/mebr0/tiny-url/internal/service"
+	"github.com/mebr0/tiny-url/pkg/auth"
 )
 
 type Handler struct {
-	services *service.Services
+	services     *service.Services
+	tokenManager auth.TokenManager
 }
 
-func NewHandler(services *service.Services) *Handler {
+func NewHandler(services *service.Services, tokenManager auth.TokenManager) *Handler {
 	return &Handler{
-		services: services,
+		services:     services,
+		tokenManager: tokenManager,
 	}
 }
 
@@ -28,7 +31,7 @@ func (h *Handler) Init(cfg *config.Config) *gin.Engine {
 }
 
 func (h *Handler) initAPI(router *gin.Engine) {
-	handlerV1 := v1.NewHandler(h.services)
+	handlerV1 := v1.NewHandler(h.services, h.tokenManager)
 
 	api := router.Group("/api")
 	{

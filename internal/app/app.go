@@ -33,7 +33,8 @@ func Run(configPath string) {
 
 	db := mongoClient.Database(cfg.Mongo.Name)
 
-	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
+	passwordHasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
+	urlHasher := hash.NewMD5Encoder()
 
 	tokenManager, err := auth.NewManager(cfg.Auth.JWT.Key)
 
@@ -44,8 +45,8 @@ func Run(configPath string) {
 
 	// Init handlers
 	repos := repo.NewRepos(db)
-	services := service.NewServices(repos, hasher, tokenManager)
-	handlers := handler.NewHandler(services)
+	services := service.NewServices(repos, passwordHasher, tokenManager, urlHasher, cfg.Auth.AccessTokenTTL)
+	handlers := handler.NewHandler(services, tokenManager)
 
 	// HTTP Server
 	srv := server.NewServer(cfg, handlers.Init(cfg))

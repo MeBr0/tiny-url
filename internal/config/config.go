@@ -25,15 +25,16 @@ type Config struct {
 	} `yaml:"http"`
 
 	Mongo struct {
-		URI string `yaml:"uri" envconfig:"MONGO_URI"`
-		User string `yaml:"user" envconfig:"MONGO_USER"`
+		URI      string `yaml:"uri" envconfig:"MONGO_URI"`
+		User     string `yaml:"user" envconfig:"MONGO_USER"`
 		Password string `yaml:"password" envconfig:"MONGO_PASSWORD"`
-		Name string `yaml:"name" envconfig:"MONGO_NAME"`
+		Name     string `yaml:"name" envconfig:"MONGO_NAME"`
 	} `yaml:"mongo"`
 
 	Auth struct {
-		PasswordSalt string `yaml:"password-salt" envconfig:"AUTH_PASSWORD_SALT"`
-		JWT struct {
+		AccessTokenTTL time.Duration `yaml:"access-token-ttl" envconfig:"AUTH_ACCESS_TOKEN_TTL"`
+		PasswordSalt   string        `yaml:"password-salt" envconfig:"AUTH_PASSWORD_SALT"`
+		JWT            struct {
 			Key string `yaml:"key" envconfig:"AUTH_JWT_KEY"`
 		} `yaml:"jwt"`
 	} `yaml:"auth"`

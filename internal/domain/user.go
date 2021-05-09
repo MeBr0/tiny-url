@@ -6,25 +6,25 @@ import (
 )
 
 type User struct {
-	ID           primitive.ObjectID   `json:"id" bson:"_id,omitempty"`
-	Name         string               `json:"name" bson:"name"`
-	Email        string               `json:"email" bson:"email"`
-	Password     string               `json:"password" bson:"password"`
-	RegisteredAt time.Time            `json:"registeredAt" bson:"registeredAt"`
-	LastLogin    time.Time            `json:"lastLogin" bson:"lastLogin"`
+	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Name         string             `json:"name" bson:"name"`
+	Email        string             `json:"email" bson:"email"`
+	Password     string             `json:"password" bson:"password"`
+	RegisteredAt time.Time          `json:"registeredAt" bson:"registeredAt"`
+	LastLogin    time.Time          `json:"lastLogin" bson:"lastLogin"`
 }
 
 type UserRegister struct {
-	Name         string               `json:"name"`
-	Email        string               `json:"email"`
-	Password     string               `json:"password"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type UserLogin struct {
-	Email        string               `json:"email"`
-	Password     string               `json:"password"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type Tokens struct {
-	AccessToken  string `json:"accessToken"`
+	AccessToken string `json:"accessToken"`
 }
