@@ -22,6 +22,7 @@ Originally idea came from [course] of system design. Included parts:
     * Developed algorithm of encoding original url with md5 and base64
 - [ ] Data Partitioning and Replication
 - [ ] Cache
+    * Implement caching with Redis
 - [ ] Load Balancer (LB)
 - [ ] Purging or DB cleanup
 - [ ] Telemetry
