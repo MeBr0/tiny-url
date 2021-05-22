@@ -46,7 +46,7 @@ func (h *Handler) listURLs(c *gin.Context) {
 	urls, err := h.services.URLs.ListByOwner(c, userId)
 
 	if err != nil {
-		newResponse(c, http.StatusInternalServerError, "user not found")
+		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -64,13 +64,14 @@ func (h *Handler) listURLs(c *gin.Context) {
 // @Success 201 {object} domain.URL "Operation finished successfully"
 // @Failure 400 {object} response "Invalid request"
 // @Failure 401 {object} response "Invalid authorization"
+// @Failure 422 {object} response "Invalid request body"
 // @Failure 500 {object} response "Server error"
 // @Router /urls [post]
 func (h *Handler) createURL(c *gin.Context) {
 	var toCreate domain.URLCreate
 
 	if err := c.BindJSON(&toCreate); err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid input body")
+		newResponse(c, http.StatusUnprocessableEntity, "invalid request body "+err.Error())
 		return
 	}
 
