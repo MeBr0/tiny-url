@@ -3,12 +3,14 @@ package app
 import (
 	"context"
 	"errors"
+	"github.com/mebr0/tiny-url/internal/cache"
 	"github.com/mebr0/tiny-url/internal/config"
 	"github.com/mebr0/tiny-url/internal/handler"
 	"github.com/mebr0/tiny-url/internal/repo"
 	"github.com/mebr0/tiny-url/internal/server"
 	"github.com/mebr0/tiny-url/internal/service"
 	"github.com/mebr0/tiny-url/pkg/auth"
+	"github.com/mebr0/tiny-url/pkg/cache/redis"
 	"github.com/mebr0/tiny-url/pkg/database/mongodb"
 	"github.com/mebr0/tiny-url/pkg/hash"
 	log "github.com/sirupsen/logrus"
@@ -43,6 +45,13 @@ func Run(configPath string) {
 		return
 	}
 
+	redisClient, err := redis.NewClient(cfg.Redis.URI, cfg.Redis.Password, cfg.Redis.Database)
+
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
 	db := mongoClient.Database(cfg.Mongo.Name)
 
 	passwordHasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
@@ -57,7 +66,8 @@ func Run(configPath string) {
 
 	// Init handlers
 	repos := repo.NewRepos(db)
-	services := service.NewServices(repos, passwordHasher, tokenManager, urlHasher, cfg.Auth.AccessTokenTTL)
+	caches := cache.NewCaches(redisClient, cfg.Redis.TTL)
+	services := service.NewServices(repos, caches, passwordHasher, tokenManager, urlHasher, cfg.Auth.AccessTokenTTL)
 	handlers := handler.NewHandler(services, tokenManager)
 
 	// HTTP Server

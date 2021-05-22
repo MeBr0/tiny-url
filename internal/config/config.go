@@ -31,6 +31,13 @@ type Config struct {
 		Name     string `yaml:"name" envconfig:"MONGO_NAME"`
 	} `yaml:"mongo"`
 
+	Redis struct {
+		URI      string        `yaml:"uri" envconfig:"REDIS_URI"`
+		Password string        `yaml:"password" envconfig:"REDIS_PASSWORD"`
+		Database int           `yaml:"db" envconfig:"REDIS_DB"`
+		TTL      time.Duration `yaml:"ttl" envconfig:"REDIS_TTL"`
+	} `yaml:"redis"`
+
 	Auth struct {
 		AccessTokenTTL time.Duration `yaml:"access-token-ttl" envconfig:"AUTH_ACCESS_TOKEN_TTL"`
 		PasswordSalt   string        `yaml:"password-salt" envconfig:"AUTH_PASSWORD_SALT"`

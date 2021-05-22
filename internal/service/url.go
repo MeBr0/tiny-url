@@ -2,21 +2,26 @@ package service
 
 import (
 	"context"
+	"github.com/go-redis/redis/v8"
+	"github.com/mebr0/tiny-url/internal/cache"
 	"github.com/mebr0/tiny-url/internal/domain"
 	"github.com/mebr0/tiny-url/internal/repo"
 	"github.com/mebr0/tiny-url/pkg/hash"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
 
 type URLsService struct {
 	repo       repo.URLs
+	cache      cache.URLs
 	urlEncoder hash.URLEncoder
 }
 
-func newURLsService(repo repo.URLs, urlEncoder hash.URLEncoder) *URLsService {
+func newURLsService(repo repo.URLs, cache cache.URLs, urlEncoder hash.URLEncoder) *URLsService {
 	return &URLsService{
 		repo:       repo,
+		cache:      cache,
 		urlEncoder: urlEncoder,
 	}
 }
@@ -50,5 +55,27 @@ func (s *URLsService) Create(ctx context.Context, toCreate domain.URLCreate) (do
 }
 
 func (s *URLsService) Get(ctx context.Context, alias string) (domain.URL, error) {
-	return s.repo.Get(ctx, alias)
+	url, err := s.cache.Get(ctx, alias)
+
+	if err == nil {
+		return url, nil
+	}
+
+	if err != redis.Nil {
+		log.Warn("Error while get from cache " + err.Error())
+	}
+
+	url, err = s.repo.Get(ctx, alias)
+
+	if err != nil {
+		return domain.URL{}, err
+	}
+
+	go func() {
+		if err := s.cache.Set(ctx, url); err != nil {
+			log.Warn("Could not save to cache " + err.Error())
+		}
+	}()
+
+	return url, nil
 }
