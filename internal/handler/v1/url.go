@@ -16,6 +16,18 @@ func (h *Handler) initURLsRoutes(api *gin.RouterGroup) {
 	}
 }
 
+// @Summary List URLs
+// @Tags urls
+// @Description List URLs owner by user
+// @ID listURLs
+// @Security UsersAuth
+// @Accept json
+// @Produce json
+// @Success 200 {array} domain.URL "Operation finished successfully"
+// @Failure 400 {object} response "Invalid request"
+// @Failure 401 {object} response "Invalid authorization"
+// @Failure 500 {object} response "Server error"
+// @Router /urls [get]
 func (h *Handler) listURLs(c *gin.Context) {
 	userIdHex, ok := c.Get("userId")
 
@@ -41,6 +53,19 @@ func (h *Handler) listURLs(c *gin.Context) {
 	c.JSON(http.StatusOK, urls)
 }
 
+// @Summary Create new URL
+// @Tags urls
+// @Description Create new URL for user
+// @ID createURL
+// @Security UsersAuth
+// @Accept json
+// @Produce json
+// @Param input body domain.URLCreate true "Data for creating URL"
+// @Success 201 {object} domain.URL "Operation finished successfully"
+// @Failure 400 {object} response "Invalid request"
+// @Failure 401 {object} response "Invalid authorization"
+// @Failure 500 {object} response "Server error"
+// @Router /urls [post]
 func (h *Handler) createURL(c *gin.Context) {
 	var toCreate domain.URLCreate
 

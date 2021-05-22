@@ -6,6 +6,10 @@ import (
 	v1 "github.com/mebr0/tiny-url/internal/handler/v1"
 	"github.com/mebr0/tiny-url/internal/service"
 	"github.com/mebr0/tiny-url/pkg/auth"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
+
+	_ "github.com/mebr0/tiny-url/docs"
 )
 
 type Handler struct {
@@ -23,6 +27,9 @@ func NewHandler(services *service.Services, tokenManager auth.TokenManager) *Han
 func (h *Handler) Init(cfg *config.Config) *gin.Engine {
 	// Init gin handler
 	router := gin.Default()
+
+	// Init swagger routes
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Init router
 	h.initAPI(router)

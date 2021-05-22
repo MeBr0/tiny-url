@@ -6,25 +6,37 @@ import (
 )
 
 type User struct {
-	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Name         string             `json:"name" bson:"name"`
-	Email        string             `json:"email" bson:"email"`
-	Password     string             `json:"password" bson:"password"`
-	RegisteredAt time.Time          `json:"registeredAt" bson:"registeredAt"`
-	LastLogin    time.Time          `json:"lastLogin" bson:"lastLogin"`
-}
+	// Unique id
+	ID primitive.ObjectID `json:"id" bson:"_id,omitempty" format:"hexidecimal string" example:"6095872d75ff40c9238bdb29"`
+	// First name
+	Name string `json:"name" bson:"name" example:"Sirius"`
+	// Unique email
+	Email string `json:"email" bson:"email" format:"email" example:"sirius@gmail.com"`
+	// Secret password
+	Password string `json:"password" bson:"password" example:"qweqweqwe"`
+	// Time of registration
+	RegisteredAt time.Time `json:"registeredAt" bson:"registeredAt" format:"yyyy-MM-ddThh:mm:ss.ZZZ" example:"2021-05-07T18:30:05.365Z"`
+	// Last login time
+	LastLogin time.Time `json:"lastLogin" bson:"lastLogin" format:"yyyy-MM-ddThh:mm:ss.ZZZ" example:"2021-05-07T18:30:05.365Z"`
+} // @name User
 
 type UserRegister struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
+	// First name
+	Name string `json:"name" example:"Sirius"`
+	// Unique email
+	Email string `json:"email" format:"email" example:"sirius@gmail.com"`
+	// Secret password
+	Password string `json:"password" example:"qweqweqwe"`
+} // @name UserRegister
 
 type UserLogin struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
+	// Unique email
+	Email string `json:"email" format:"email" example:"sirius@gmail.com"`
+	// Secret password
+	Password string `json:"password" example:"qweqweqwe"`
+} // @name UserLogin
 
 type Tokens struct {
-	AccessToken string `json:"accessToken"`
-}
+	// Token used for accessing operations and/or resources
+	AccessToken string `json:"accessToken" example:"access token"`
+} // @name Tokens
