@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/mebr0/tiny-url/internal/cache"
 	"github.com/mebr0/tiny-url/internal/domain"
 	"github.com/mebr0/tiny-url/internal/repo"
 	"github.com/mebr0/tiny-url/pkg/auth"
@@ -31,11 +32,11 @@ type Services struct {
 	URLs
 }
 
-func NewServices(repos *repo.Repos, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
+func NewServices(repos *repo.Repos, caches *cache.Caches, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
 	urlEncoder hash.URLEncoder, accessTokenTTL time.Duration) *Services {
 	return &Services{
 		Users: newUsersService(repos.Users),
 		Auth:  newAuthService(repos.Users, hasher, tokenManager, accessTokenTTL),
-		URLs:  newURLsService(repos.URLs, urlEncoder),
+		URLs:  newURLsService(repos.URLs, caches.URLs, urlEncoder),
 	}
 }

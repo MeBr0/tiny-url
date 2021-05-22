@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"encoding/json"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
@@ -23,3 +24,13 @@ type URLCreate struct {
 	Original string             `json:"original" bson:"original" format:"valid URL" example:"https://google.com/"`
 	Owner    primitive.ObjectID `bson:"owner" swaggerignore:"true"`
 } // @name URLCreate
+
+// MarshalBinary implement encoding.BinaryMarshaler for redis scanning
+func (url URL) MarshalBinary() ([]byte, error) {
+	return json.Marshal(url)
+}
+
+// UnmarshalBinary implement encoding.BinaryUnmarshaler for redis scanning
+func (url *URL) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, url)
+}

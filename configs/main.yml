@@ -1,15 +1,16 @@
 log:
   level: INFO
-
 http:
   port: 8080
   read-timeout: 10s
   write-timeout: 10s
   max-header-megabytes: 1
-
 mongo:
   uri: mongodb://localhost:27017
   name: tiny_url
-
+redis:
+  uri: localhost:6379
+  db: 0
+  ttl: 5s
 auth:
   access-token-ttl: 10m
