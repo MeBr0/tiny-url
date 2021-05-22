@@ -6,6 +6,7 @@ import (
 	"github.com/mebr0/tiny-url/internal/repo"
 	"github.com/mebr0/tiny-url/pkg/auth"
 	"github.com/mebr0/tiny-url/pkg/hash"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
@@ -60,7 +61,18 @@ func (s *AuthService) Login(ctx context.Context, toLogin domain.UserLogin) (doma
 		return domain.Tokens{}, err
 	}
 
-	return s.createSession(ctx, user.ID)
+	tokens, err := s.createSession(ctx, user.ID)
+
+	// Async update last login
+	if err == nil {
+		go func() {
+			if loginErr := s.repo.UpdateLastLogin(ctx, user.ID, time.Now()); loginErr != nil {
+				log.Warn("Could not updates last login by time.Now() for user " + user.ID.Hex() + " " + loginErr.Error())
+			}
+		}()
+	}
+
+	return tokens, err
 }
 
 func (s *AuthService) createSession(ctx context.Context, userId primitive.ObjectID) (domain.Tokens, error) {

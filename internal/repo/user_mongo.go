@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 type UsersRepo struct {
@@ -59,4 +60,12 @@ func (r *UsersRepo) GetByCredentials(ctx context.Context, email, password string
 	}
 
 	return user, nil
+}
+
+func (r *UsersRepo) UpdateLastLogin(ctx context.Context, id primitive.ObjectID, lastLogin time.Time) error {
+	if _, err := r.db.UpdateByID(ctx, id, bson.M{"$set": bson.M{"lastLogin": lastLogin}}); err != nil {
+		return err
+	}
+
+	return nil
 }
