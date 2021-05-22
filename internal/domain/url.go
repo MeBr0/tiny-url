@@ -21,7 +21,7 @@ type URL struct {
 
 type URLCreate struct {
 	// Original URL
-	Original string             `json:"original" bson:"original" format:"valid URL" example:"https://google.com/"`
+	Original string             `json:"original" bson:"original" binding:"required,url" format:"valid URL" example:"https://google.com/"`
 	Owner    primitive.ObjectID `bson:"owner" swaggerignore:"true"`
 } // @name URLCreate
 

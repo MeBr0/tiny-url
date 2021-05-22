@@ -22,18 +22,18 @@ type User struct {
 
 type UserRegister struct {
 	// First name
-	Name string `json:"name" example:"Sirius"`
+	Name string `json:"name" binding:"required,alpha,min=4" example:"Sirius"`
 	// Unique email
-	Email string `json:"email" format:"email" example:"sirius@gmail.com"`
+	Email string `json:"email" binding:"required,email" format:"email" example:"sirius@gmail.com"`
 	// Secret password
-	Password string `json:"password" example:"qweqweqwe"`
+	Password string `json:"password" binding:"required,alphanum,min=8" example:"qweqweqwe"`
 } // @name UserRegister
 
 type UserLogin struct {
 	// Unique email
-	Email string `json:"email" format:"email" example:"sirius@gmail.com"`
+	Email string `json:"email" binding:"required,email" format:"email" example:"sirius@gmail.com"`
 	// Secret password
-	Password string `json:"password" example:"qweqweqwe"`
+	Password string `json:"password" binding:"required,alphanum" example:"qweqweqwe"`
 } // @name UserLogin
 
 type Tokens struct {

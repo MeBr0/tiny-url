@@ -24,13 +24,14 @@ func (h *Handler) initAuthRoutes(api *gin.RouterGroup) {
 // @Param input body domain.UserRegister true "Register info"
 // @Success 201 {string} null "Operation finished successfully"
 // @Failure 400 {object} response "Invalid request"
+// @Failure 422 {object} response "Invalid request body"
 // @Failure 500 {object} response "Server error"
 // @Router /auth/register [post]
 func (h *Handler) register(c *gin.Context) {
 	var toRegister domain.UserRegister
 
 	if err := c.BindJSON(&toRegister); err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid input body")
+		newResponse(c, http.StatusUnprocessableEntity, "invalid request body "+err.Error())
 		return
 	}
 
@@ -56,13 +57,14 @@ func (h *Handler) register(c *gin.Context) {
 // @Param input body domain.UserLogin true "Login credentials"
 // @Success 200 {object} domain.Tokens "Operation finished successfully"
 // @Failure 400 {object} response "Invalid request"
+// @Failure 422 {object} response "Invalid request body"
 // @Failure 500 {object} response "Server error"
 // @Router /auth/login [post]
 func (h *Handler) login(c *gin.Context) {
 	var toLogin domain.UserLogin
 
 	if err := c.BindJSON(&toLogin); err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid input body")
+		newResponse(c, http.StatusUnprocessableEntity, "invalid request body "+err.Error())
 		return
 	}
 
