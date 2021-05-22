@@ -12,6 +12,15 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 	}
 }
 
+// @Summary List users
+// @Tags users
+// @Description List all users
+// @ID listUsers
+// @Accept json
+// @Produce json
+// @Success 200 {array} domain.User "Operation finished successfully"
+// @Failure 500 {object} response "Server error"
+// @Router /users [get]
 func (h *Handler) listUsers(c *gin.Context) {
 	users, err := h.services.Users.List(c)
 

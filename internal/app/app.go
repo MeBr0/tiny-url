@@ -19,6 +19,18 @@ import (
 	"time"
 )
 
+// @title Tiny URL API
+// @version 1.0.0
+// @description API for shortening URL
+
+// @host localhost:8080
+// @BasePath /api/v1/
+
+// @securityDefinitions.apikey UsersAuth
+// @in header
+// @name Authorization
+
+// Run initializes application
 func Run(configPath string) {
 	// Load configs
 	cfg := config.LoadConfig(configPath)

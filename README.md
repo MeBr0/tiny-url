@@ -27,6 +27,10 @@ Originally idea came from [course] of system design. Included parts:
 - [ ] Telemetry
 - [ ] Security and Permissions
 
+## Swagger
+
+Run `swag init -g internal/app/app.go` for generating openapi documentation
+
 ## Build
 
 Run `go build cmd/app/main.go` for building project

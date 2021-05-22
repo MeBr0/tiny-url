@@ -11,8 +11,9 @@ type idResponse struct {
 }
 
 type response struct {
-	Message string `json:"message"`
-}
+	// Success or error message
+	Message string `json:"message" example:"some text"`
+} // @name Response
 
 func newResponse(c *gin.Context, statusCode int, message string) {
 	c.AbortWithStatusJSON(statusCode, response{message})

@@ -15,6 +15,17 @@ func (h *Handler) initAuthRoutes(api *gin.RouterGroup) {
 	}
 }
 
+// @Summary Register
+// @Tags auth
+// @Description User registration
+// @ID register
+// @Accept json
+// @Produce json
+// @Param input body domain.UserRegister true "Register info"
+// @Success 201 {string} null "Operation finished successfully"
+// @Failure 400 {object} response "Invalid request"
+// @Failure 500 {object} response "Server error"
+// @Router /auth/register [post]
 func (h *Handler) register(c *gin.Context) {
 	var toRegister domain.UserRegister
 
@@ -36,6 +47,17 @@ func (h *Handler) register(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
+// @Summary Login
+// @Tags auth
+// @Description User login
+// @ID login
+// @Accept json
+// @Produce json
+// @Param input body domain.UserLogin true "Login credentials"
+// @Success 200 {object} domain.Tokens "Operation finished successfully"
+// @Failure 400 {object} response "Invalid request"
+// @Failure 500 {object} response "Server error"
+// @Router /auth/login [post]
 func (h *Handler) login(c *gin.Context) {
 	var toLogin domain.UserLogin
 

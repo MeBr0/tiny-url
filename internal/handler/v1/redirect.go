@@ -13,6 +13,17 @@ func (h *Handler) initRedirectRoutes(api *gin.RouterGroup) {
 	}
 }
 
+// @Summary Redirect
+// @Tags urls
+// @Description Redirect with alias
+// @ID redirectWithAlias
+// @Accept json
+// @Produce json
+// @Param alias path string true "Alias for redirection"
+// @Success 301 {string} null "Redirected successfully"
+// @Failure 400 {object} response "Invalid request"
+// @Failure 500 {object} response "Server error"
+// @Router /to/{alias} [get]
 func (h *Handler) redirectWithAlias(c *gin.Context) {
 	alias := c.Param("alias")
 
