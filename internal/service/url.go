@@ -31,7 +31,7 @@ func (s *URLsService) ListByOwner(ctx context.Context, userId primitive.ObjectID
 }
 
 func (s *URLsService) Create(ctx context.Context, toCreate domain.URLCreate) (domain.URL, error) {
-	alias, err := s.urlEncoder.Encode(toCreate.Original)
+	alias, err := s.urlEncoder.Encode(toCreate.Original, toCreate.Owner)
 
 	if err != nil {
 		return domain.URL{}, err
