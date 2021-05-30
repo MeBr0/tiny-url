@@ -14,3 +14,5 @@ redis:
   ttl: 5s
 auth:
   access-token-ttl: 10m
+url:
+  alias-length: 8

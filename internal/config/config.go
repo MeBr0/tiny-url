@@ -45,6 +45,10 @@ type Config struct {
 			Key string `yaml:"key" envconfig:"AUTH_JWT_KEY"`
 		} `yaml:"jwt"`
 	} `yaml:"auth"`
+
+	URL struct {
+		AliasLength int `yaml:"alias-length" envconfig:"URL_ALIAS_LENGTH"`
+	} `yaml:"url"`
 }
 
 func LoadConfig(configPath string) *Config {

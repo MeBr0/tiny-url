@@ -67,7 +67,7 @@ func Run(configPath string) {
 	// Init handlers
 	repos := repo.NewRepos(db)
 	caches := cache.NewCaches(redisClient, cfg.Redis.TTL)
-	services := service.NewServices(repos, caches, passwordHasher, tokenManager, urlHasher, cfg.Auth.AccessTokenTTL)
+	services := service.NewServices(repos, caches, passwordHasher, tokenManager, urlHasher, cfg.Auth.AccessTokenTTL, cfg.URL.AliasLength)
 	handlers := handler.NewHandler(services, tokenManager)
 
 	// HTTP Server
