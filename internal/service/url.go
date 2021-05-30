@@ -16,13 +16,15 @@ type URLsService struct {
 	repo       repo.URLs
 	cache      cache.URLs
 	urlEncoder hash.URLEncoder
+	aliasLength int
 }
 
-func newURLsService(repo repo.URLs, cache cache.URLs, urlEncoder hash.URLEncoder) *URLsService {
+func newURLsService(repo repo.URLs, cache cache.URLs, urlEncoder hash.URLEncoder, aliasLength int) *URLsService {
 	return &URLsService{
 		repo:       repo,
 		cache:      cache,
 		urlEncoder: urlEncoder,
+		aliasLength: aliasLength,
 	}
 }
 
@@ -31,27 +33,42 @@ func (s *URLsService) ListByOwner(ctx context.Context, userId primitive.ObjectID
 }
 
 func (s *URLsService) Create(ctx context.Context, toCreate domain.URLCreate) (domain.URL, error) {
-	alias, err := s.urlEncoder.Encode(toCreate.Original)
+	try := 0
 
-	if err != nil {
-		return domain.URL{}, err
+	for {
+		alias, err := s.urlEncoder.Encode(toCreate.Original, toCreate.Owner, try, s.aliasLength)
+
+		if err != nil {
+			if err == hash.ErrURLAliasLengthExceed {
+				break
+			}
+
+			return domain.URL{}, err
+		}
+
+		url := domain.URL{
+			Alias:     alias,
+			Original:  toCreate.Original,
+			CreatedAt: time.Now(),
+			ExpiredAt: time.Now().Add(time.Duration(10000000000)),
+			Owner:     toCreate.Owner,
+		}
+
+		id, err := s.repo.Create(ctx, url)
+
+		if err != nil {
+			if err != repo.ErrURLAlreadyExists {
+				return domain.URL{}, err
+			}
+
+			log.Warn("Could not create alias")
+			try += 1
+		}
+
+		return s.repo.Get(ctx, id)
 	}
 
-	url := domain.URL{
-		Alias:     alias,
-		Original:  toCreate.Original,
-		CreatedAt: time.Now(),
-		ExpiredAt: time.Now().Add(time.Duration(10000000000)),
-		Owner:     toCreate.Owner,
-	}
-
-	id, err := s.repo.Create(ctx, url)
-
-	if err != nil {
-		return domain.URL{}, err
-	}
-
-	return s.repo.Get(ctx, id)
+	return domain.URL{}, ErrNoPossibleAliasEncoding
 }
 
 func (s *URLsService) Get(ctx context.Context, alias string) (domain.URL, error) {

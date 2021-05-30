@@ -33,10 +33,10 @@ type Services struct {
 }
 
 func NewServices(repos *repo.Repos, caches *cache.Caches, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
-	urlEncoder hash.URLEncoder, accessTokenTTL time.Duration) *Services {
+	urlEncoder hash.URLEncoder, accessTokenTTL time.Duration, aliasLength int) *Services {
 	return &Services{
 		Users: newUsersService(repos.Users),
 		Auth:  newAuthService(repos.Users, hasher, tokenManager, accessTokenTTL),
-		URLs:  newURLsService(repos.URLs, caches.URLs, urlEncoder),
+		URLs:  newURLsService(repos.URLs, caches.URLs, urlEncoder, aliasLength),
 	}
 }
