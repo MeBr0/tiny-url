@@ -21,7 +21,7 @@ type Auth interface {
 }
 
 type URLs interface {
-	ListByOwner(ctx context.Context, userId primitive.ObjectID) ([]domain.URL, error)
+	ListByOwner(ctx context.Context, owner primitive.ObjectID) ([]domain.URL, error)
 	Create(ctx context.Context, toCreate domain.URLCreate) (domain.URL, error)
 	Get(ctx context.Context, alias string) (domain.URL, error)
 }
@@ -33,10 +33,10 @@ type Services struct {
 }
 
 func NewServices(repos *repo.Repos, caches *cache.Caches, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
-	urlEncoder hash.URLEncoder, accessTokenTTL time.Duration, aliasLength int) *Services {
+	urlEncoder hash.URLEncoder, accessTokenTTL time.Duration, aliasLength int, defaultExpiration int) *Services {
 	return &Services{
 		Users: newUsersService(repos.Users),
 		Auth:  newAuthService(repos.Users, hasher, tokenManager, accessTokenTTL),
-		URLs:  newURLsService(repos.URLs, caches.URLs, urlEncoder, aliasLength),
+		URLs:  newURLsService(repos.URLs, caches.URLs, urlEncoder, aliasLength, defaultExpiration),
 	}
 }

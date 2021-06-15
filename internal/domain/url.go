@@ -21,9 +21,22 @@ type URL struct {
 
 type URLCreate struct {
 	// Original URL
-	Original string             `json:"original" bson:"original" binding:"required,url" format:"valid URL" example:"https://google.com/"`
-	Owner    primitive.ObjectID `bson:"owner" swaggerignore:"true"`
+	Original string `json:"original" binding:"required,url" format:"valid URL" example:"https://google.com/"`
+	// Duration of life of URL in seconds
+	Duration int                `json:"duration" binding:"gte=0" example:"3600"`
+	Owner    primitive.ObjectID `swaggerignore:"true"`
 } // @name URLCreate
+
+// NewURL create new URL from URLCreate and alias
+func NewURL(toCreate URLCreate, alias string) URL {
+	return URL{
+		Alias:     alias,
+		Original:  toCreate.Original,
+		CreatedAt: time.Now(),
+		ExpiredAt: time.Now().Add(time.Duration(toCreate.Duration) * time.Second),
+		Owner:     toCreate.Owner,
+	}
+}
 
 // MarshalBinary implement encoding.BinaryMarshaler for redis scanning
 func (url URL) MarshalBinary() ([]byte, error) {
@@ -33,4 +46,9 @@ func (url URL) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary implement encoding.BinaryUnmarshaler for redis scanning
 func (url *URL) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, url)
+}
+
+// Expired whether url is expired
+func (url URL) Expired() bool {
+	return url.ExpiredAt.Before(time.Now())
 }

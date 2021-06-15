@@ -32,3 +32,7 @@ func (c *URLsCache) Get(ctx context.Context, alias string) (domain.URL, error) {
 
 	return url, nil
 }
+
+func (c *URLsCache) Delete(ctx context.Context, alias string) error {
+	return c.client.Del(ctx, alias).Err()
+}
