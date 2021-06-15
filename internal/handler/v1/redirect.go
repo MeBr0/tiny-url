@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/mebr0/tiny-url/internal/repo"
+	"github.com/mebr0/tiny-url/internal/service"
 	"net/http"
 )
 
@@ -35,7 +36,7 @@ func (h *Handler) redirectWithAlias(c *gin.Context) {
 	url, err := h.services.URLs.Get(c, alias)
 
 	if err != nil {
-		if err == repo.ErrURLNotFound {
+		if err == repo.ErrURLNotFound || err == service.ErrURLExpired {
 			newResponse(c, http.StatusBadRequest, err.Error())
 			return
 		}

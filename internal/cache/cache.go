@@ -10,6 +10,7 @@ import (
 type URLs interface {
 	Set(ctx context.Context, url domain.URL) error
 	Get(ctx context.Context, alias string) (domain.URL, error)
+	Delete(ctx context.Context, alias string) error
 }
 
 type Caches struct {

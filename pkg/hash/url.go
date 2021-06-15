@@ -34,9 +34,9 @@ func (e *MD5Encoder) Encode(url string, userId primitive.ObjectID, start int, le
 
 	encoded := base64.StdEncoding.EncodeToString([]byte(hash))
 
-	if start + length > len(encoded) {
+	if start+length > len(encoded) {
 		return "", ErrURLAliasLengthExceed
 	}
 
-	return encoded[start:start + length], nil
+	return encoded[start : start+length], nil
 }

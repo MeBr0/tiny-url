@@ -19,6 +19,8 @@ type URLs interface {
 	ListByOwner(ctx context.Context, userId primitive.ObjectID) ([]domain.URL, error)
 	Create(ctx context.Context, url domain.URL) (string, error)
 	Get(ctx context.Context, alias string) (domain.URL, error)
+	GetByOriginalAndUser(ctx context.Context, original string, owner primitive.ObjectID) (domain.URL, error)
+	Delete(ctx context.Context, alias string) error
 }
 
 type Repos struct {

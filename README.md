@@ -12,19 +12,21 @@ Originally idea came from [course] of system design. Included parts:
     * Created minimal functionality of service
 - [ ] Capacity Estimation and Constraints
 - [ ] System APIs
-    * Developed create URL operation
+    * Developed create and delete URL operations
 - [x] Database Design
     * Read about SQL vs NoSQL in order for choosing database type
     * Choose NoSQL database - MongoDB, because of weak relationship 
       between entities. Also, it is easier to scale
     * Copy original schema of database
-- [ ] Basic System Design and Algorithm
+- [x] Basic System Design and Algorithm
     * Developed algorithm of encoding original url with md5 and base64
 - [ ] Data Partitioning and Replication
-- [ ] Cache
+- [x] Cache
     * Implement caching with Redis
+    * Developed cache invalidation policy
 - [ ] Load Balancer (LB)
 - [ ] Purging or DB cleanup
+    * Deleting expired URLs whenever it was accessed
 - [ ] Telemetry
 - [ ] Security and Permissions
 

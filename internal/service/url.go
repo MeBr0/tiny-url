@@ -9,30 +9,76 @@ import (
 	"github.com/mebr0/tiny-url/pkg/hash"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"time"
 )
 
 type URLsService struct {
-	repo       repo.URLs
-	cache      cache.URLs
-	urlEncoder hash.URLEncoder
-	aliasLength int
+	repo              repo.URLs
+	cache             cache.URLs
+	urlEncoder        hash.URLEncoder
+	aliasLength       int
+	defaultExpiration int
 }
 
-func newURLsService(repo repo.URLs, cache cache.URLs, urlEncoder hash.URLEncoder, aliasLength int) *URLsService {
+func newURLsService(repo repo.URLs, cache cache.URLs, urlEncoder hash.URLEncoder, aliasLength int, defaultExpiration int) *URLsService {
 	return &URLsService{
-		repo:       repo,
-		cache:      cache,
-		urlEncoder: urlEncoder,
-		aliasLength: aliasLength,
+		repo:              repo,
+		cache:             cache,
+		urlEncoder:        urlEncoder,
+		aliasLength:       aliasLength,
+		defaultExpiration: defaultExpiration,
 	}
 }
 
 func (s *URLsService) ListByOwner(ctx context.Context, userId primitive.ObjectID) ([]domain.URL, error) {
-	return s.repo.ListByOwner(ctx, userId)
+	urls, err := s.repo.ListByOwner(ctx, userId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Delete all expired URLs
+	oneExpired := false
+
+	for _, url := range urls {
+		if url.Expired() {
+			oneExpired = true
+
+			if err := s.repo.Delete(ctx, url.Alias); err != nil {
+				log.Warn("Could not delete from database " + err.Error())
+			}
+		}
+	}
+
+	// Query again if one expired
+	if oneExpired {
+		return s.repo.ListByOwner(ctx, userId)
+	}
+
+	return urls, nil
 }
 
 func (s *URLsService) Create(ctx context.Context, toCreate domain.URLCreate) (domain.URL, error) {
+	// Get URL from database
+	url, err := s.repo.GetByOriginalAndUser(ctx, toCreate.Original, toCreate.Owner)
+
+	// If other error than not found return it
+	if err != nil && err != repo.ErrURLNotFound {
+		return domain.URL{}, err
+	}
+
+	// If URL expired delete it
+	if err == nil && url.Expired() {
+		if err := s.repo.Delete(ctx, url.Alias); err != nil {
+			log.Warn("Could not delete from database " + err.Error())
+		}
+	}
+
+	// If URL exists return error
+	if err == nil && !url.Expired() {
+		return domain.URL{}, repo.ErrURLAlreadyExists
+	}
+
+	// Begin tries to generate alias
 	try := 0
 
 	for {
@@ -46,13 +92,12 @@ func (s *URLsService) Create(ctx context.Context, toCreate domain.URLCreate) (do
 			return domain.URL{}, err
 		}
 
-		url := domain.URL{
-			Alias:     alias,
-			Original:  toCreate.Original,
-			CreatedAt: time.Now(),
-			ExpiredAt: time.Now().Add(time.Duration(10000000000)),
-			Owner:     toCreate.Owner,
+		// Set default duration
+		if toCreate.Duration == 0 {
+			toCreate.Duration = s.defaultExpiration
 		}
+
+		url := domain.NewURL(toCreate, alias)
 
 		id, err := s.repo.Create(ctx, url)
 
@@ -72,6 +117,7 @@ func (s *URLsService) Create(ctx context.Context, toCreate domain.URLCreate) (do
 }
 
 func (s *URLsService) Get(ctx context.Context, alias string) (domain.URL, error) {
+	// Get URL from cache
 	url, err := s.cache.Get(ctx, alias)
 
 	if err == nil {
@@ -82,12 +128,31 @@ func (s *URLsService) Get(ctx context.Context, alias string) (domain.URL, error)
 		log.Warn("Error while get from cache " + err.Error())
 	}
 
+	// Get URL from database
 	url, err = s.repo.Get(ctx, alias)
 
 	if err != nil {
 		return domain.URL{}, err
 	}
 
+	// If URL expired delete it from database and cache
+	if url.Expired() {
+		go func() {
+			if err := s.cache.Delete(ctx, url.Alias); err != nil {
+				log.Warn("Could not delete from cache " + err.Error())
+			}
+		}()
+
+		go func() {
+			if err := s.repo.Delete(ctx, url.Alias); err != nil {
+				log.Warn("Could not delete from database " + err.Error())
+			}
+		}()
+
+		return domain.URL{}, ErrURLExpired
+	}
+
+	// Put valid URL to cache
 	go func() {
 		if err := s.cache.Set(ctx, url); err != nil {
 			log.Warn("Could not save to cache " + err.Error())

@@ -47,7 +47,8 @@ type Config struct {
 	} `yaml:"auth"`
 
 	URL struct {
-		AliasLength int `yaml:"alias-length" envconfig:"URL_ALIAS_LENGTH"`
+		AliasLength       int `yaml:"alias-length" envconfig:"URL_ALIAS_LENGTH"`
+		DefaultExpiration int `yaml:"default-expiration" envconfig:"URL_DEFAULT_EXPIRATION"`
 	} `yaml:"url"`
 }
 
