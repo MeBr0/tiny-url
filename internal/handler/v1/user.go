@@ -22,7 +22,7 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 // @Failure 500 {object} response "Server error"
 // @Router /users [get]
 func (h *Handler) listUsers(c *gin.Context) {
-	users, err := h.services.Users.List(c)
+	users, err := h.services.Users.List(c.Request.Context())
 
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())

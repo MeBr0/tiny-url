@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
 type Users interface {
 	List(ctx context.Context) ([]domain.User, error)
 }

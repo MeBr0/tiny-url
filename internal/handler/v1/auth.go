@@ -31,11 +31,11 @@ func (h *Handler) register(c *gin.Context) {
 	var toRegister domain.UserRegister
 
 	if err := c.BindJSON(&toRegister); err != nil {
-		newResponse(c, http.StatusUnprocessableEntity, "invalid request body "+err.Error())
+		newResponse(c, http.StatusUnprocessableEntity, "invalid request body")
 		return
 	}
 
-	if err := h.services.Register(c, toRegister); err != nil {
+	if err := h.services.Register(c.Request.Context(), toRegister); err != nil {
 		if err == repo.ErrUserAlreadyExists {
 			newResponse(c, http.StatusBadRequest, err.Error())
 			return
@@ -64,11 +64,11 @@ func (h *Handler) login(c *gin.Context) {
 	var toLogin domain.UserLogin
 
 	if err := c.BindJSON(&toLogin); err != nil {
-		newResponse(c, http.StatusUnprocessableEntity, "invalid request body "+err.Error())
+		newResponse(c, http.StatusUnprocessableEntity, "invalid request body")
 		return
 	}
 
-	token, err := h.services.Login(c, toLogin)
+	token, err := h.services.Login(c.Request.Context(), toLogin)
 
 	if err != nil {
 		if err == repo.ErrUserNotFound {
