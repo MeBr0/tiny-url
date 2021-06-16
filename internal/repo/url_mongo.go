@@ -61,7 +61,7 @@ func (r *URLsRepo) Get(ctx context.Context, alias string) (domain.URL, error) {
 	return url, nil
 }
 
-func (r *URLsRepo) GetByOriginalAndUser(ctx context.Context, original string, owner primitive.ObjectID) (domain.URL, error) {
+func (r *URLsRepo) GetByOriginalAndOwner(ctx context.Context, original string, owner primitive.ObjectID) (domain.URL, error) {
 	var url domain.URL
 
 	if err := r.db.FindOne(ctx, bson.M{"original": original, "owner": owner}).Decode(&url); err != nil {

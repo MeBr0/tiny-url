@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mebr0/tiny-url/internal/domain"
 	"github.com/mebr0/tiny-url/internal/repo"
+	"github.com/mebr0/tiny-url/internal/service"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 )
@@ -94,7 +95,7 @@ func (h *Handler) createURL(c *gin.Context) {
 	url, err := h.services.URLs.Create(c, toCreate)
 
 	if err != nil {
-		if err == repo.ErrURLAlreadyExists {
+		if err == repo.ErrURLAlreadyExists || err == service.ErrURLLimit {
 			newResponse(c, http.StatusBadRequest, err.Error())
 			return
 		}

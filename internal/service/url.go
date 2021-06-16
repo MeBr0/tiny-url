@@ -17,15 +17,17 @@ type URLsService struct {
 	urlEncoder        hash.URLEncoder
 	aliasLength       int
 	defaultExpiration int
+	urlCountLimit     int
 }
 
-func newURLsService(repo repo.URLs, cache cache.URLs, urlEncoder hash.URLEncoder, aliasLength int, defaultExpiration int) *URLsService {
+func newURLsService(repo repo.URLs, cache cache.URLs, urlEncoder hash.URLEncoder, aliasLength int, defaultExpiration int, urlCountLimit int) *URLsService {
 	return &URLsService{
 		repo:              repo,
 		cache:             cache,
 		urlEncoder:        urlEncoder,
 		aliasLength:       aliasLength,
 		defaultExpiration: defaultExpiration,
+		urlCountLimit:     urlCountLimit,
 	}
 }
 
@@ -59,7 +61,7 @@ func (s *URLsService) ListByOwner(ctx context.Context, userId primitive.ObjectID
 
 func (s *URLsService) Create(ctx context.Context, toCreate domain.URLCreate) (domain.URL, error) {
 	// Get URL from database
-	url, err := s.repo.GetByOriginalAndUser(ctx, toCreate.Original, toCreate.Owner)
+	url, err := s.repo.GetByOriginalAndOwner(ctx, toCreate.Original, toCreate.Owner)
 
 	// If other error than not found return it
 	if err != nil && err != repo.ErrURLNotFound {
@@ -76,6 +78,17 @@ func (s *URLsService) Create(ctx context.Context, toCreate domain.URLCreate) (do
 	// If URL exists return error
 	if err == nil && !url.Expired() {
 		return domain.URL{}, repo.ErrURLAlreadyExists
+	}
+
+	// Check for URL count limit
+	urls, err := s.ListByOwner(ctx, toCreate.Owner)
+
+	if err != nil {
+		return domain.URL{}, err
+	}
+
+	if len(urls) > s.urlCountLimit {
+		return domain.URL{}, ErrURLLimit
 	}
 
 	// Begin tries to generate alias

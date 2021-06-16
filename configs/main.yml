@@ -17,3 +17,4 @@ auth:
 url:
   alias-length: 8
   default-expiration: 30
+  count-limit: 5

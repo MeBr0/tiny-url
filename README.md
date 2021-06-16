@@ -11,8 +11,9 @@ Originally idea came from [course] of system design. Included parts:
 - [ ] Requirements and Goals of the System
     * Created minimal functionality of service
 - [ ] Capacity Estimation and Constraints
-- [ ] System APIs
+- [x] System APIs
     * Developed create and delete URL operations
+    * Limit active URL count
 - [x] Database Design
     * Read about SQL vs NoSQL in order for choosing database type
     * Choose NoSQL database - MongoDB, because of weak relationship 
