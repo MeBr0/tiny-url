@@ -49,6 +49,7 @@ type Config struct {
 	URL struct {
 		AliasLength       int `yaml:"alias-length" envconfig:"URL_ALIAS_LENGTH"`
 		DefaultExpiration int `yaml:"default-expiration" envconfig:"URL_DEFAULT_EXPIRATION"`
+		CountLimit        int `yaml:"count-limit" envconfig:"URL_COUNT_LIMIT"`
 	} `yaml:"url"`
 }
 
