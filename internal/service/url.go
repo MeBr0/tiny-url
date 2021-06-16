@@ -85,6 +85,7 @@ func (s *URLsService) Create(ctx context.Context, toCreate domain.URLCreate) (do
 		alias, err := s.urlEncoder.Encode(toCreate.Original, toCreate.Owner, try, s.aliasLength)
 
 		if err != nil {
+			// Stop trying to create alias
 			if err == hash.ErrURLAliasLengthExceed {
 				break
 			}
@@ -98,7 +99,6 @@ func (s *URLsService) Create(ctx context.Context, toCreate domain.URLCreate) (do
 		}
 
 		url := domain.NewURL(toCreate, alias)
-
 		id, err := s.repo.Create(ctx, url)
 
 		if err != nil {
@@ -106,8 +106,11 @@ func (s *URLsService) Create(ctx context.Context, toCreate domain.URLCreate) (do
 				return domain.URL{}, err
 			}
 
+			// If alias already exists try one more
 			log.Warn("Could not create alias")
 			try += 1
+
+			continue
 		}
 
 		return s.repo.Get(ctx, id)
