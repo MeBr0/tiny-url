@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+//go:generate mockgen -source=cache.go -destination=mocks/mock.go
+
 type URLs interface {
 	Set(ctx context.Context, url domain.URL) error
 	Get(ctx context.Context, alias string) (domain.URL, error)

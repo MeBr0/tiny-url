@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+//go:generate mockgen -source=repo.go -destination=mocks/mock.go
+
 type Users interface {
 	List(ctx context.Context) ([]domain.User, error)
 	Create(ctx context.Context, user domain.User) (primitive.ObjectID, error)

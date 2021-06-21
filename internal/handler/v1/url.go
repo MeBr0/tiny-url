@@ -44,7 +44,7 @@ func (h *Handler) listURLs(c *gin.Context) {
 		return
 	}
 
-	urls, err := h.services.URLs.ListByOwner(c, userId)
+	urls, err := h.services.URLs.ListByOwner(c.Request.Context(), userId)
 
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
@@ -72,7 +72,7 @@ func (h *Handler) createURL(c *gin.Context) {
 	var toCreate domain.URLCreate
 
 	if err := c.BindJSON(&toCreate); err != nil {
-		newResponse(c, http.StatusUnprocessableEntity, "invalid request body "+err.Error())
+		newResponse(c, http.StatusUnprocessableEntity, "invalid request body")
 		return
 	}
 
@@ -92,7 +92,7 @@ func (h *Handler) createURL(c *gin.Context) {
 
 	toCreate.Owner = userId
 
-	url, err := h.services.URLs.Create(c, toCreate)
+	url, err := h.services.URLs.Create(c.Request.Context(), toCreate)
 
 	if err != nil {
 		if err == repo.ErrURLAlreadyExists || err == service.ErrURLLimit {

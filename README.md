@@ -35,6 +35,19 @@ Originally idea came from [course] of system design. Included parts:
 
 Run `swag init -g internal/app/app.go` for generating openapi documentation
 
+## Tests
+
+Run `GIN_MODE=release go test --short -coverprofile=cover.out -v ./...` 
+for running unit tests
+
+### Coverage
+
+Run `go tool cover -func=cover.out` to see coverage report
+
+### Mocks
+
+Run `go generate` in package for generating mock classes
+
 ## Build
 
 Run `go build cmd/app/main.go` for building project

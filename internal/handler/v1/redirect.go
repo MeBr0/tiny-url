@@ -33,7 +33,7 @@ func (h *Handler) redirectWithAlias(c *gin.Context) {
 		return
 	}
 
-	url, err := h.services.URLs.Get(c, alias)
+	url, err := h.services.URLs.Get(c.Request.Context(), alias)
 
 	if err != nil {
 		if err == repo.ErrURLNotFound || err == service.ErrURLExpired {
