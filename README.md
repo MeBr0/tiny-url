@@ -37,7 +37,12 @@ Run `swag init -g internal/app/app.go` for generating openapi documentation
 
 ## Tests
 
-Run `GIN_MODE=release go test -v ./...` for running unit tests
+Run `GIN_MODE=release go test --short -coverprofile=cover.out -v ./...` 
+for running unit tests
+
+### Coverage
+
+Run `go tool cover -func=cover.out` to see coverage report
 
 ### Mocks
 
