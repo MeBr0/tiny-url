@@ -33,6 +33,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Generate Swagger
+        run: |
+          go get github.com/swaggo/swag/cmd/swag
+          swag init -g internal/app/app.go
+
       - name: Unit Tests
         run: go test --short -coverprofile=cover.out -v ./...
         env:
@@ -53,6 +58,11 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Generate Swagger
+        run: |
+          go get github.com/swaggo/swag/cmd/swag
+          swag init -g internal/app/app.go
 
       - name: Build
         run: go build -ldflags="-w -s" -v -o main ./cmd/app/main.go
