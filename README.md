@@ -33,6 +33,30 @@ Originally idea came from [course] of system design. Included parts:
 - [ ] Telemetry
 - [ ] Security and Permissions
 
+## Variables
+
+Use these variables to run project
+
+```dotenv
+MONGO_URI=mongodb://localhost:27017
+MONGO_USER=<username>
+MONGO_PASSWORD=<password>
+MONGO_NAME=<db>
+
+REDIS_URI=localhost:6379
+REDIS_PASSWORD=<password>>
+REDIS_DB=<db>
+REDIS_TTL=10s
+
+AUTH_ACCESS_TOKEN_TTL=5m
+AUTH_PASSWORD_SALT=<salt>
+AUTH_JWT_KEY=<key>
+
+URL_ALIAS_LENGTH=8
+URL_DEFAULT_EXPIRATION=30
+URL_COUNT_LIMIT=3
+```
+
 ## Swagger
 
 Run `swag init -g internal/app/app.go` for generating openapi documentation
@@ -57,6 +81,14 @@ Run `go build cmd/app/main.go` for building project
 ## Run
 
 Run built binary with `./main`
+
+## Docker
+
+Use dockerfiles in `build` directory for building images and 
+running containers
+
+Use `build/Dockerfile` for building images on unix systems. 
+Use `build/Dockerfile.multi` for building images on non-unix systems
 
 ## Format
 
