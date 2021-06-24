@@ -16,8 +16,20 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: golangci-lint
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Generate Swagger
+        run: |
+          go get github.com/swaggo/swag/cmd/swag
+          swag init -g internal/app/app.go
+
+      - name: Lint
         uses: golangci/golangci-lint-action@v2
         with:
           version: v1.40
