@@ -38,6 +38,10 @@ Originally idea came from [course] of system design. Included parts:
 Use these variables to run project in `.env` file
 
 ```dotenv
+LOG_LEVEL=INFO
+
+GIN_MODE=release    # For prod
+
 MONGO_URI=mongodb://localhost:27017
 MONGO_USER=<username>
 MONGO_PASSWORD=<password>
