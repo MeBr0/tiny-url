@@ -35,7 +35,7 @@ Originally idea came from [course] of system design. Included parts:
 
 ## Variables
 
-Use these variables to run project
+Use these variables to run project in `.env` file
 
 ```dotenv
 MONGO_URI=mongodb://localhost:27017
@@ -44,7 +44,7 @@ MONGO_PASSWORD=<password>
 MONGO_NAME=<db>
 
 REDIS_URI=localhost:6379
-REDIS_PASSWORD=<password>>
+REDIS_PASSWORD=<password>
 REDIS_DB=<db>
 REDIS_TTL=10s
 

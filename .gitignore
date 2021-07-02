@@ -24,3 +24,6 @@ vendor/
 
 # Swaggo
 /docs
+
+# Env
+.env
