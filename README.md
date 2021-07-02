@@ -1,6 +1,4 @@
-# Tiny URL
-
-![develop](https://github.com/mebr0/tiny-url/actions/workflows/develop.yml/badge.svg)
+# Tiny URL ![master](https://github.com/mebr0/tiny-url/actions/workflows/master.yml/badge.svg)
 
 Service for shortening URL by providing special aliases, which will redirect
 to actual URL. Similar services: TinyURL (itself), byt.ly, goo.gl, qlink.me,
