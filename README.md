@@ -35,7 +35,7 @@ Originally idea came from [course] of system design. Included parts:
 
 ## Variables
 
-Use these variables to run project
+Use these variables to run project in `.env` file
 
 ```dotenv
 MONGO_URI=mongodb://localhost:27017
