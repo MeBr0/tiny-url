@@ -94,4 +94,12 @@ func Run(configPath string) {
 	if err := srv.Stop(ctx); err != nil {
 		log.Errorf("failed to stop server: %v", err)
 	}
+
+	if err := mongoClient.Disconnect(context.Background()); err != nil {
+		log.Errorf("failed to disconnect from mongo: %v", err)
+	}
+
+	if err := redisClient.Close(); err != nil {
+		log.Errorf("failed to disconnect from redis: %v", err)
+	}
 }
