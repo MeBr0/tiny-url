@@ -57,41 +57,25 @@ URL_DEFAULT_EXPIRATION=30
 URL_COUNT_LIMIT=3
 ```
 
-## Swagger
+## Commands
 
-Run `swag init -g internal/app/app.go` for generating openapi documentation
+`go generate` - generate mock classes _(in package)_
 
-## Tests
+`make fmt` - format whole project with gofmt _(do it before any commit)_
 
-Run `GIN_MODE=release go test --short -coverprofile=cover.out -v ./...` 
-for running unit tests
+`make swag` - generate openapi documentation
 
-### Coverage
+`make cover` - run unit tests and show coverage report
 
-Run `go tool cover -func=cover.out` to see coverage report
+`make build` - build project
 
-### Mocks
-
-Run `go generate` in package for generating mock classes
-
-## Build
-
-Run `go build cmd/app/main.go` for building project
-
-## Run
-
-Run built binary with `./main`
+`make run` - build and run project
 
 ## Docker
 
-Use dockerfiles in `build` directory for building images and 
-running containers
+Use dockerfiles in `build` directory for building images and running containers
 
 Use `build/Dockerfile` for building images on unix systems. 
 Use `build/Dockerfile.multi` for building images on non-unix systems
-
-## Format
-
-Before any commit run `gofmt -s -w .` for formatting whole project
 
 [course]: https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR
