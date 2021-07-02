@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
@@ -84,10 +85,19 @@ func (c *Config) readFile(path string) {
 
 // Read configs with values from env variables
 func (c *Config) readEnv() {
+	loadFromEnvFile()
+
 	err := envconfig.Process("", c)
 
 	if err != nil {
 		processError(err)
+	}
+}
+
+// Load values from .env file to system
+func loadFromEnvFile() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
 	}
 }
 

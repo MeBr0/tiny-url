@@ -44,7 +44,7 @@ MONGO_PASSWORD=<password>
 MONGO_NAME=<db>
 
 REDIS_URI=localhost:6379
-REDIS_PASSWORD=<password>>
+REDIS_PASSWORD=<password>
 REDIS_DB=<db>
 REDIS_TTL=10s
 
