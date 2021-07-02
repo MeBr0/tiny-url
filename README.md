@@ -1,14 +1,13 @@
 # Tiny URL ![master](https://github.com/mebr0/tiny-url/actions/workflows/master.yml/badge.svg)
 
 Service for shortening URL by providing special aliases, which will redirect
-to actual URL. Similar services: TinyURL (itself), byt.ly, goo.gl, qlink.me,
-etc
+to actual URL. Similar services: [tiny-url], [bit-ly], [short-url], etc
 
 Originally idea came from [course] of system design. Included parts:
 
 - [x] Why do we need URL shortening?
     * Understood main idea of service
-- [ ] Requirements and Goals of the System
+- [x] Requirements and Goals of the System
     * Created minimal functionality of service
 - [ ] Capacity Estimation and Constraints
 - [x] System APIs
@@ -26,7 +25,7 @@ Originally idea came from [course] of system design. Included parts:
     * Implement caching with Redis
     * Developed cache invalidation policy
 - [ ] Load Balancer (LB)
-- [ ] Purging or DB cleanup
+- [x] Purging or DB cleanup
     * Deleting expired URLs whenever it was accessed
 - [ ] Telemetry
 - [ ] Security and Permissions
@@ -81,3 +80,6 @@ Use `build/Dockerfile` for building images on unix systems.
 Use `build/Dockerfile.multi` for building images on non-unix systems
 
 [course]: https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR
+[tiny-url]: https://tinyurl.com/app
+[bit-ly]: https://bitly.com/
+[short-url]: https://www.shorturl.at/
