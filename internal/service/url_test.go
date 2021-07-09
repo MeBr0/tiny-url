@@ -80,31 +80,6 @@ func TestURLsService_Create(t *testing.T) {
 	require.IsType(t, domain.URL{}, res)
 }
 
-func TestURLsService_CreateExpiredURL(t *testing.T) {
-	service, urlsRepo, _ := mockURLService(t)
-
-	ctx := context.Background()
-
-	userId := primitive.NewObjectID()
-
-	urlsRepo.EXPECT().GetByOriginalAndOwner(ctx, "url", userId).Return(domain.URL{
-		Alias: "alias",
-	}, nil)
-	urlsRepo.EXPECT().Delete(ctx, "alias").Return(nil)
-	urlsRepo.EXPECT().ListByOwner(ctx, userId).Return([]domain.URL{}, nil)
-	urlsRepo.EXPECT().Create(ctx, gomock.Any()).Return("alias", nil)
-	urlsRepo.EXPECT().Get(ctx, "alias").Return(domain.URL{}, nil)
-
-	res, err := service.Create(ctx, domain.URLCreate{
-		Original: "url",
-		Duration: 25,
-		Owner:    userId,
-	})
-
-	require.NoError(t, err)
-	require.IsType(t, domain.URL{}, res)
-}
-
 func TestURLsService_CreateErrURLAlreadyExists(t *testing.T) {
 	service, urlsRepo, _ := mockURLService(t)
 
@@ -153,21 +128,4 @@ func TestURLsService_GetFromDatabase(t *testing.T) {
 
 	require.NoError(t, err)
 	require.IsType(t, domain.URL{}, res)
-}
-
-func TestURLsService_GetExpiredFromDatabase(t *testing.T) {
-	urLsService, urlsRepo, urlsCache := mockURLService(t)
-
-	ctx := context.Background()
-
-	urlsCache.EXPECT().Get(ctx, "alias").Return(domain.URL{}, redis.Nil)
-	urlsRepo.EXPECT().Get(ctx, "alias").Return(domain.URL{
-		Alias: "alias",
-	}, nil)
-	urlsCache.EXPECT().Delete(ctx, "alias").Return(nil)
-	urlsRepo.EXPECT().Delete(ctx, "alias").Return(nil)
-
-	_, err := urLsService.Get(ctx, "alias")
-
-	require.ErrorIs(t, err, ErrURLExpired)
 }

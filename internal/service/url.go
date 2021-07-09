@@ -32,51 +32,20 @@ func newURLsService(repo repo.URLs, cache cache.URLs, urlEncoder hash.URLEncoder
 }
 
 func (s *URLsService) ListByOwner(ctx context.Context, userId primitive.ObjectID) ([]domain.URL, error) {
-	urls, err := s.repo.ListByOwner(ctx, userId)
-
-	if err != nil {
-		return nil, err
-	}
-
-	// Delete all expired URLs
-	oneExpired := false
-
-	for _, url := range urls {
-		if url.Expired() {
-			oneExpired = true
-
-			if err := s.repo.Delete(ctx, url.Alias); err != nil {
-				log.Warn("Could not delete from database " + err.Error())
-			}
-		}
-	}
-
-	// Query again if one expired
-	if oneExpired {
-		return s.repo.ListByOwner(ctx, userId)
-	}
-
-	return urls, nil
+	return s.repo.ListByOwner(ctx, userId)
 }
 
 func (s *URLsService) Create(ctx context.Context, toCreate domain.URLCreate) (domain.URL, error) {
 	// Get URL from database
-	url, err := s.repo.GetByOriginalAndOwner(ctx, toCreate.Original, toCreate.Owner)
+	_, err := s.repo.GetByOriginalAndOwner(ctx, toCreate.Original, toCreate.Owner)
 
 	// If other error than not found return it
 	if err != nil && err != repo.ErrURLNotFound {
 		return domain.URL{}, err
 	}
 
-	// If URL expired delete it
-	if err == nil && url.Expired() {
-		if err := s.repo.Delete(ctx, url.Alias); err != nil {
-			log.Warn("Could not delete from database " + err.Error())
-		}
-	}
-
 	// If URL exists return error
-	if err == nil && !url.Expired() {
+	if err == nil {
 		return domain.URL{}, repo.ErrURLAlreadyExists
 	}
 
@@ -149,23 +118,6 @@ func (s *URLsService) Get(ctx context.Context, alias string) (domain.URL, error)
 
 	if err != nil {
 		return domain.URL{}, err
-	}
-
-	// If URL expired delete it from database and cache
-	if url.Expired() {
-		go func() {
-			if err := s.cache.Delete(ctx, url.Alias); err != nil {
-				log.Warn("Could not delete from cache " + err.Error())
-			}
-		}()
-
-		go func() {
-			if err := s.repo.Delete(ctx, url.Alias); err != nil {
-				log.Warn("Could not delete from database " + err.Error())
-			}
-		}()
-
-		return domain.URL{}, ErrURLExpired
 	}
 
 	// Put valid URL to cache
