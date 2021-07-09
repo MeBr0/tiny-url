@@ -36,12 +36,27 @@ func TestHandler_redirectWithAlias(t *testing.T) {
 					Alias:     "alias",
 					Original:  "https://google.com",
 					CreatedAt: time.Now(),
-					ExpiredAt: time.Now(),
+					ExpiredAt: time.Now().Add(5 * time.Minute),
 					Owner:     userId,
 				}, nil)
 			},
 			statusCode:   301,
 			responseBody: ``,
+		},
+		{
+			name:  "url expired",
+			alias: "alias",
+			mockBehaviour: func(s *mockService.MockURLs, alias string) {
+				s.EXPECT().Get(context.Background(), alias).Return(domain.URL{
+					Alias:     "alias",
+					Original:  "https://google.com",
+					CreatedAt: time.Now(),
+					ExpiredAt: time.Now().Add(-5 * time.Minute),
+					Owner:     userId,
+				}, nil)
+			},
+			statusCode:   400,
+			responseBody: `{"message":"url expired"}`,
 		},
 		{
 			name:  "url does not exists",
@@ -51,15 +66,6 @@ func TestHandler_redirectWithAlias(t *testing.T) {
 			},
 			statusCode:   400,
 			responseBody: `{"message":"url doesn't exists"}`,
-		},
-		{
-			name:  "url expired",
-			alias: "alias",
-			mockBehaviour: func(s *mockService.MockURLs, alias string) {
-				s.EXPECT().Get(context.Background(), alias).Return(domain.URL{}, service.ErrURLExpired)
-			},
-			statusCode:   400,
-			responseBody: `{"message":"url expired"}`,
 		},
 	}
 

@@ -141,6 +141,20 @@ func (mr *MockURLsMockRecorder) Create(ctx, toCreate interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockURLs)(nil).Create), ctx, toCreate)
 }
 
+// Delete mocks base method.
+func (m *MockURLs) Delete(ctx context.Context, alias string, owner primitive.ObjectID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", ctx, alias, owner)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete.
+func (mr *MockURLsMockRecorder) Delete(ctx, alias, owner interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockURLs)(nil).Delete), ctx, alias, owner)
+}
+
 // Get mocks base method.
 func (m *MockURLs) Get(ctx context.Context, alias string) (domain.URL, error) {
 	m.ctrl.T.Helper()
@@ -156,6 +170,21 @@ func (mr *MockURLsMockRecorder) Get(ctx, alias interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockURLs)(nil).Get), ctx, alias)
 }
 
+// GetByOwner mocks base method.
+func (m *MockURLs) GetByOwner(ctx context.Context, alias string, owner primitive.ObjectID) (domain.URL, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByOwner", ctx, alias, owner)
+	ret0, _ := ret[0].(domain.URL)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByOwner indicates an expected call of GetByOwner.
+func (mr *MockURLsMockRecorder) GetByOwner(ctx, alias, owner interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByOwner", reflect.TypeOf((*MockURLs)(nil).GetByOwner), ctx, alias, owner)
+}
+
 // ListByOwner mocks base method.
 func (m *MockURLs) ListByOwner(ctx context.Context, owner primitive.ObjectID) ([]domain.URL, error) {
 	m.ctrl.T.Helper()
@@ -169,4 +198,19 @@ func (m *MockURLs) ListByOwner(ctx context.Context, owner primitive.ObjectID) ([
 func (mr *MockURLsMockRecorder) ListByOwner(ctx, owner interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByOwner", reflect.TypeOf((*MockURLs)(nil).ListByOwner), ctx, owner)
+}
+
+// Prolong mocks base method.
+func (m *MockURLs) Prolong(ctx context.Context, alias string, owner primitive.ObjectID, toProlong domain.URLProlong) (domain.URL, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Prolong", ctx, alias, owner, toProlong)
+	ret0, _ := ret[0].(domain.URL)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Prolong indicates an expected call of Prolong.
+func (mr *MockURLsMockRecorder) Prolong(ctx, alias, owner, toProlong interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Prolong", reflect.TypeOf((*MockURLs)(nil).Prolong), ctx, alias, owner, toProlong)
 }

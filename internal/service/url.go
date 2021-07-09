@@ -129,3 +129,50 @@ func (s *URLsService) Get(ctx context.Context, alias string) (domain.URL, error)
 
 	return url, nil
 }
+
+func (s *URLsService) GetByOwner(ctx context.Context, alias string, owner primitive.ObjectID) (domain.URL, error) {
+	url, err := s.Get(ctx, alias)
+
+	if err != nil {
+		return domain.URL{}, err
+	}
+
+	// If owners do not match, return forbidden
+	if url.Owner != owner {
+		return domain.URL{}, ErrURLForbidden
+	}
+
+	return url, nil
+}
+
+func (s *URLsService) Prolong(ctx context.Context, alias string, owner primitive.ObjectID, toProlong domain.URLProlong) (domain.URL, error) {
+	if _, err := s.GetByOwner(ctx, alias, owner); err != nil {
+		return domain.URL{}, err
+	}
+
+	if err := s.repo.Prolong(ctx, alias, toProlong); err != nil {
+		return domain.URL{}, err
+	}
+
+	if err := s.cache.Delete(ctx, alias); err != nil {
+		log.Warn("Error while delete from cache " + err.Error())
+	}
+
+	return s.GetByOwner(ctx, alias, owner)
+}
+
+func (s *URLsService) Delete(ctx context.Context, alias string, owner primitive.ObjectID) error {
+	if _, err := s.GetByOwner(ctx, alias, owner); err != nil {
+		return err
+	}
+
+	if err := s.repo.Delete(ctx, alias); err != nil {
+		return err
+	}
+
+	if err := s.cache.Delete(ctx, alias); err != nil {
+		log.Warn("Error while delete from cache " + err.Error())
+	}
+
+	return nil
+}

@@ -26,6 +26,9 @@ type URLs interface {
 	ListByOwner(ctx context.Context, owner primitive.ObjectID) ([]domain.URL, error)
 	Create(ctx context.Context, toCreate domain.URLCreate) (domain.URL, error)
 	Get(ctx context.Context, alias string) (domain.URL, error)
+	GetByOwner(ctx context.Context, alias string, owner primitive.ObjectID) (domain.URL, error)
+	Prolong(ctx context.Context, alias string, owner primitive.ObjectID, toProlong domain.URLProlong) (domain.URL, error)
+	Delete(ctx context.Context, alias string, owner primitive.ObjectID) error
 }
 
 type Services struct {

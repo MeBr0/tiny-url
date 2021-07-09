@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 type URLsRepo struct {
@@ -73,6 +74,14 @@ func (r *URLsRepo) GetByOriginalAndOwner(ctx context.Context, original string, o
 	}
 
 	return url, nil
+}
+
+func (r *URLsRepo) Prolong(ctx context.Context, alias string, toProlong domain.URLProlong) error {
+	updateQuery := bson.M{"expiredAt": time.Now().Add(time.Duration(toProlong.Duration) * time.Second)}
+
+	_, err := r.db.UpdateByID(ctx, alias, bson.M{"$set": updateQuery})
+
+	return err
 }
 
 func (r *URLsRepo) Delete(ctx context.Context, alias string) error {

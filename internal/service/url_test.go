@@ -129,3 +129,72 @@ func TestURLsService_GetFromDatabase(t *testing.T) {
 	require.NoError(t, err)
 	require.IsType(t, domain.URL{}, res)
 }
+
+func TestURLsService_GetByOwner(t *testing.T) {
+	s, _, urlsCache := mockURLService(t)
+
+	ctx := context.Background()
+	owner := primitive.NewObjectID()
+
+	urlsCache.EXPECT().Get(ctx, "alias").Return(domain.URL{
+		Owner: owner,
+	}, nil)
+
+	res, err := s.GetByOwner(ctx, "alias", owner)
+
+	require.NoError(t, err)
+	require.IsType(t, domain.URL{}, res)
+}
+
+func TestURLsService_GetByOwnerErrURLForbidden(t *testing.T) {
+	s, _, urlsCache := mockURLService(t)
+
+	ctx := context.Background()
+
+	urlsCache.EXPECT().Get(ctx, "alias").Return(domain.URL{
+		Owner: primitive.NilObjectID,
+	}, nil)
+
+	_, err := s.GetByOwner(ctx, "alias", primitive.NewObjectID())
+
+	require.ErrorIs(t, err, ErrURLForbidden)
+}
+
+func TestURLsService_Prolong(t *testing.T) {
+	s, urlsRepo, urlsCache := mockURLService(t)
+
+	ctx := context.Background()
+
+	owner := primitive.NewObjectID()
+
+	urlsCache.EXPECT().Get(ctx, "alias").Return(domain.URL{
+		Owner: owner,
+	}, nil).Times(2)
+
+	urlsRepo.EXPECT().Prolong(ctx, "alias", domain.URLProlong{Duration: 5}).Return(nil)
+	urlsCache.EXPECT().Delete(ctx, "alias").Return(nil)
+
+	res, err := s.Prolong(ctx, "alias", owner, domain.URLProlong{Duration: 5})
+
+	require.NoError(t, err)
+	require.IsType(t, domain.URL{}, res)
+}
+
+func TestURLsService_Delete(t *testing.T) {
+	s, urlsRepo, urlsCache := mockURLService(t)
+
+	ctx := context.Background()
+
+	owner := primitive.NewObjectID()
+
+	urlsCache.EXPECT().Get(ctx, "alias").Return(domain.URL{
+		Owner: owner,
+	}, nil)
+
+	urlsRepo.EXPECT().Delete(ctx, "alias").Return(nil)
+	urlsCache.EXPECT().Delete(ctx, "alias").Return(nil)
+
+	err := s.Delete(ctx, "alias", owner)
+
+	require.NoError(t, err)
+}
