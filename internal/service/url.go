@@ -9,6 +9,7 @@ import (
 	"github.com/mebr0/tiny-url/pkg/hash"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
 )
 
 type URLsService struct {
@@ -124,9 +125,12 @@ func (s *URLsService) Get(ctx context.Context, alias string) (domain.URL, error)
 		return domain.URL{}, err
 	}
 
-	// Put valid URL to cache
+	// Async update cache
 	go func() {
-		if err := s.cache.Set(ctx, url); err != nil {
+		c, cancel := context.WithTimeout(context.Background(), time.Duration(5) * time.Second)
+		defer cancel()
+
+		if err := s.cache.Set(c, url); err != nil {
 			log.Warn("Could not save to cache " + err.Error())
 		}
 	}()
@@ -158,9 +162,15 @@ func (s *URLsService) Prolong(ctx context.Context, alias string, owner primitive
 		return domain.URL{}, err
 	}
 
-	if err := s.cache.Delete(ctx, alias); err != nil {
-		log.Warn("Error while delete from cache " + err.Error())
-	}
+	// Async update cache
+	go func() {
+		c, cancel := context.WithTimeout(context.Background(), time.Duration(5) * time.Second)
+		defer cancel()
+
+		if err := s.cache.Delete(c, alias); err != nil {
+			log.Warn("Could not delete from cache " + err.Error())
+		}
+	}()
 
 	return s.GetByOwner(ctx, alias, owner)
 }
@@ -174,9 +184,15 @@ func (s *URLsService) Delete(ctx context.Context, alias string, owner primitive.
 		return err
 	}
 
-	if err := s.cache.Delete(ctx, alias); err != nil {
-		log.Warn("Error while delete from cache " + err.Error())
-	}
+	// Async update cache
+	go func() {
+		c, cancel := context.WithTimeout(context.Background(), time.Duration(5) * time.Second)
+		defer cancel()
+
+		if err := s.cache.Delete(c, alias); err != nil {
+			log.Warn("Could not delete from cache " + err.Error())
+		}
+	}()
 
 	return nil
 }

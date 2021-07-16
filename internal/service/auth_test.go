@@ -49,7 +49,7 @@ func TestAuthService_Login(t *testing.T) {
 	ctx := context.Background()
 
 	usersRepo.EXPECT().GetByCredentials(ctx, gomock.Any(), gomock.Any()).Return(domain.User{}, nil)
-	usersRepo.EXPECT().UpdateLastLogin(ctx, gomock.Any(), gomock.Any()).Return(nil)
+	usersRepo.EXPECT().UpdateLastLogin(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 
 	res, err := service.Login(ctx, domain.UserLogin{})
 
