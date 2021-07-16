@@ -137,7 +137,7 @@ func TestURLsService_GetFromDatabase(t *testing.T) {
 	urlsRepo.EXPECT().Get(ctx, "alias").Return(domain.URL{
 		ExpiredAt: time.Now().Add(time.Duration(1) * time.Minute),
 	}, nil)
-	urlsCache.EXPECT().Set(ctx, gomock.Any()).Return(nil)
+	urlsCache.EXPECT().Set(gomock.Any(), gomock.Any()).Return(nil)
 
 	res, err := service.Get(ctx, "alias")
 
@@ -187,7 +187,7 @@ func TestURLsService_Prolong(t *testing.T) {
 	}, nil).Times(2)
 
 	urlsRepo.EXPECT().Prolong(ctx, "alias", domain.URLProlong{Duration: 5}).Return(nil)
-	urlsCache.EXPECT().Delete(ctx, "alias").Return(nil)
+	urlsCache.EXPECT().Delete(gomock.Any(), "alias").Return(nil)
 
 	res, err := s.Prolong(ctx, "alias", owner, domain.URLProlong{Duration: 5})
 
@@ -207,7 +207,7 @@ func TestURLsService_Delete(t *testing.T) {
 	}, nil)
 
 	urlsRepo.EXPECT().Delete(ctx, "alias").Return(nil)
-	urlsCache.EXPECT().Delete(ctx, "alias").Return(nil)
+	urlsCache.EXPECT().Delete(gomock.Any(), "alias").Return(nil)
 
 	err := s.Delete(ctx, "alias", owner)
 
