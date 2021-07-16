@@ -66,7 +66,7 @@ func TestURLsService_ListByOwnerErr(t *testing.T) {
 
 	userId := primitive.NewObjectID()
 
-	urlsRepo.EXPECT().ListByOwner(ctx, userId).Return([]domain.URL{}, commonErr)
+	urlsRepo.EXPECT().ListByOwner(ctx, userId).Return([]domain.URL{}, errDefault)
 
 	_, err := service.ListByOwner(ctx, userId)
 

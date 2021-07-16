@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-var commonErr = errors.New("error")
+var errDefault = errors.New("error")
 
 func mockAuthService(t *testing.T) (*AuthService, *mockRepo.MockUsers) {
 	t.Helper()
@@ -74,7 +74,7 @@ func TestAuthService_LoginErr(t *testing.T) {
 
 	ctx := context.Background()
 
-	usersRepo.EXPECT().GetByCredentials(ctx, gomock.Any(), gomock.Any()).Return(domain.User{}, commonErr)
+	usersRepo.EXPECT().GetByCredentials(ctx, gomock.Any(), gomock.Any()).Return(domain.User{}, errDefault)
 
 	_, err := service.Login(ctx, domain.UserLogin{})
 
