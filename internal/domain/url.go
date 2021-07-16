@@ -27,6 +27,11 @@ type URLCreate struct {
 	Owner    primitive.ObjectID `swaggerignore:"true"`
 } // @name URLCreate
 
+type URLProlong struct {
+	// Duration of life of URL in seconds
+	Duration int `json:"duration" binding:"gte=0" example:"3600"`
+} // @name URLProlong
+
 // NewURL create new URL from URLCreate and alias
 func NewURL(toCreate URLCreate, alias string) URL {
 	return URL{
