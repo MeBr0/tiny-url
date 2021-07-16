@@ -8,8 +8,6 @@ import (
 	"github.com/mebr0/tiny-url/pkg/auth"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
-
-	_ "github.com/mebr0/tiny-url/docs"
 )
 
 type Handler struct {

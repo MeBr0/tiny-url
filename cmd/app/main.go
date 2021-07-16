@@ -1,6 +1,9 @@
 package main
 
-import "github.com/mebr0/tiny-url/internal/app"
+import (
+	_ "github.com/mebr0/tiny-url/docs"
+	"github.com/mebr0/tiny-url/internal/app"
+)
 
 const configPath = "configs/main.yml"
 
