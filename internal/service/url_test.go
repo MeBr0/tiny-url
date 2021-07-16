@@ -24,7 +24,7 @@ func mockURLService(t *testing.T) (*URLsService, *mockRepo.MockURLs, *mockCache.
 	urlsRepo := mockRepo.NewMockURLs(mockCtl)
 	urlsCache := mockCache.NewMockURLs(mockCtl)
 
-	service := newURLsService(urlsRepo, urlsCache, hash.NewMD5Encoder(), 6, 10000, 3)
+	service := newURLsService(urlsRepo, urlsCache, hash.NewMD5URLEncoder(), 6, 10000, 3)
 
 	return service, urlsRepo, urlsCache
 }

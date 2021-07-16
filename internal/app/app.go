@@ -54,10 +54,10 @@ func Run(configPath string) {
 
 	db := mongoClient.Database(cfg.Mongo.Name)
 
-	passwordHasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
-	urlHasher := hash.NewMD5Encoder()
+	passwordHasher := hash.NewSHA1PasswordHasher(cfg.Auth.PasswordSalt)
+	urlHasher := hash.NewMD5URLEncoder()
 
-	tokenManager, err := auth.NewManager(cfg.Auth.JWT.Key)
+	tokenManager, err := auth.NewJWTManager(cfg.Auth.JWT.Key)
 
 	if err != nil {
 		log.Error(err)
