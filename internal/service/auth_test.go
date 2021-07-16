@@ -24,9 +24,9 @@ func mockAuthService(t *testing.T) (*AuthService, *mockRepo.MockUsers) {
 	defer mockCtl.Finish()
 
 	usersRepo := mockRepo.NewMockUsers(mockCtl)
-	authManager, _ := auth.NewManager("key")
+	authManager, _ := auth.NewJWTManager("key")
 
-	service := newAuthService(usersRepo, hash.NewSHA1Hasher(""), authManager, time.Duration(1)*time.Hour)
+	service := newAuthService(usersRepo, hash.NewSHA1PasswordHasher(""), authManager, time.Duration(1)*time.Hour)
 
 	return service, usersRepo
 }

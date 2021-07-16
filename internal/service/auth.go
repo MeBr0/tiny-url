@@ -79,7 +79,7 @@ func (s *AuthService) createSession(ctx context.Context, userId primitive.Object
 	var res domain.Tokens
 	var err error
 
-	res.AccessToken, err = s.tokenManager.NewJWT(userId.Hex(), s.accessTokenTTL)
+	res.AccessToken, err = s.tokenManager.Issue(userId.Hex(), s.accessTokenTTL)
 
 	return res, err
 }
