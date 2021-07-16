@@ -29,6 +29,21 @@ func mockURLService(t *testing.T) (*URLsService, *mockRepo.MockURLs, *mockCache.
 	return service, urlsRepo, urlsCache
 }
 
+func TestURLsService_ListByOwnerAndExpiration(t *testing.T) {
+	service, urlsRepo, _ := mockURLService(t)
+
+	ctx := context.Background()
+
+	userId := primitive.NewObjectID()
+
+	urlsRepo.EXPECT().ListByOwnerAndExpiration(ctx, userId, false).Return([]domain.URL{}, nil)
+
+	res, err := service.ListByOwnerAndExpiration(ctx, userId, false)
+
+	require.NoError(t, err)
+	require.IsType(t, []domain.URL{}, res)
+}
+
 func TestURLsService_ListByOwner(t *testing.T) {
 	service, urlsRepo, _ := mockURLService(t)
 

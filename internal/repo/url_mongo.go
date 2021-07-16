@@ -34,6 +34,28 @@ func (r *URLsRepo) ListByOwner(ctx context.Context, userId primitive.ObjectID) (
 	return urls, err
 }
 
+func (r *URLsRepo) ListByOwnerAndExpiration(ctx context.Context, userId primitive.ObjectID, expired bool) ([]domain.URL, error) {
+	urls := make([]domain.URL, 0)
+
+	var op string
+
+	if expired {
+		op = "$lt"
+	} else {
+		op = "$gte"
+	}
+
+	cur, err := r.db.Find(ctx, bson.M{"owner": userId, "expiredAt": bson.M{op: time.Now()}})
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = cur.All(ctx, &urls)
+
+	return urls, err
+}
+
 func (r *URLsRepo) Create(ctx context.Context, url domain.URL) (string, error) {
 	res, err := r.db.InsertOne(ctx, url)
 

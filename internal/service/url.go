@@ -35,6 +35,10 @@ func (s *URLsService) ListByOwner(ctx context.Context, userId primitive.ObjectID
 	return s.repo.ListByOwner(ctx, userId)
 }
 
+func (s *URLsService) ListByOwnerAndExpiration(ctx context.Context, userId primitive.ObjectID, expired bool) ([]domain.URL, error) {
+	return s.repo.ListByOwnerAndExpiration(ctx, userId, expired)
+}
+
 func (s *URLsService) Create(ctx context.Context, toCreate domain.URLCreate) (domain.URL, error) {
 	// Get URL from database
 	_, err := s.repo.GetByOriginalAndOwner(ctx, toCreate.Original, toCreate.Owner)

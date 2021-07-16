@@ -19,6 +19,7 @@ type Users interface {
 
 type URLs interface {
 	ListByOwner(ctx context.Context, userId primitive.ObjectID) ([]domain.URL, error)
+	ListByOwnerAndExpiration(ctx context.Context, userId primitive.ObjectID, expired bool) ([]domain.URL, error)
 	Create(ctx context.Context, url domain.URL) (string, error)
 	Get(ctx context.Context, alias string) (domain.URL, error)
 	GetByOriginalAndOwner(ctx context.Context, original string, owner primitive.ObjectID) (domain.URL, error)

@@ -7,6 +7,7 @@ import (
 	"github.com/mebr0/tiny-url/internal/service"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
+	"strconv"
 )
 
 func (h *Handler) initURLsRoutes(api *gin.RouterGroup) {
@@ -47,7 +48,22 @@ func (h *Handler) listURLs(c *gin.Context) {
 		return
 	}
 
-	urls, err := h.services.URLs.ListByOwner(c.Request.Context(), userId)
+	expired := c.Query("expired")
+
+	var urls []domain.URL
+
+	if expired == "" {
+		urls, err = h.services.URLs.ListByOwner(c.Request.Context(), userId)
+	} else {
+		exp, err := strconv.ParseBool(expired)
+
+		if err != nil {
+			newResponse(c, http.StatusBadRequest, "expired parameter not boolean")
+			return
+		}
+
+		urls, err = h.services.URLs.ListByOwnerAndExpiration(c.Request.Context(), userId, exp)
+	}
 
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())

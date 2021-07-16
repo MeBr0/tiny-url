@@ -200,6 +200,21 @@ func (mr *MockURLsMockRecorder) ListByOwner(ctx, owner interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByOwner", reflect.TypeOf((*MockURLs)(nil).ListByOwner), ctx, owner)
 }
 
+// ListByOwnerAndExpiration mocks base method.
+func (m *MockURLs) ListByOwnerAndExpiration(ctx context.Context, userId primitive.ObjectID, expired bool) ([]domain.URL, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListByOwnerAndExpiration", ctx, userId, expired)
+	ret0, _ := ret[0].([]domain.URL)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListByOwnerAndExpiration indicates an expected call of ListByOwnerAndExpiration.
+func (mr *MockURLsMockRecorder) ListByOwnerAndExpiration(ctx, userId, expired interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByOwnerAndExpiration", reflect.TypeOf((*MockURLs)(nil).ListByOwnerAndExpiration), ctx, userId, expired)
+}
+
 // Prolong mocks base method.
 func (m *MockURLs) Prolong(ctx context.Context, alias string, owner primitive.ObjectID, toProlong domain.URLProlong) (domain.URL, error) {
 	m.ctrl.T.Helper()
