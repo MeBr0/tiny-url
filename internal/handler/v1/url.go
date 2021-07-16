@@ -55,7 +55,9 @@ func (h *Handler) listURLs(c *gin.Context) {
 	if expired == "" {
 		urls, err = h.services.URLs.ListByOwner(c.Request.Context(), userId)
 	} else {
-		exp, err := strconv.ParseBool(expired)
+		var exp bool
+
+		exp, err = strconv.ParseBool(expired)
 
 		if err != nil {
 			newResponse(c, http.StatusBadRequest, "expired parameter not boolean")

@@ -41,7 +41,7 @@ func TestHandler_listURLs(t *testing.T) {
 	tests := []struct {
 		name          string
 		userId        primitive.ObjectID
-		query string
+		query         string
 		mockBehaviour mockBehaviour
 		statusCode    int
 		responseBody  string
@@ -58,7 +58,7 @@ func TestHandler_listURLs(t *testing.T) {
 		{
 			name:   "ok with expired=true",
 			userId: userId,
-			query: "expired=true",
+			query:  "expired=true",
 			mockBehaviour: func(s *mockService.MockURLs, ownerId primitive.ObjectID) {
 				s.EXPECT().ListByOwnerAndExpiration(context.Background(), ownerId, true).Return(urls, nil)
 			},
@@ -66,12 +66,12 @@ func TestHandler_listURLs(t *testing.T) {
 			responseBody: setResponseBody(urls),
 		},
 		{
-			name:   "error with expired=qwe",
-			userId: userId,
-			query: "expired=qwe",
+			name:          "error with expired=qwe",
+			userId:        userId,
+			query:         "expired=qwe",
 			mockBehaviour: func(s *mockService.MockURLs, ownerId primitive.ObjectID) {},
-			statusCode:   400,
-			responseBody: `{"message":"expired parameter not boolean"}`,
+			statusCode:    400,
+			responseBody:  `{"message":"expired parameter not boolean"}`,
 		},
 	}
 
@@ -98,7 +98,7 @@ func TestHandler_listURLs(t *testing.T) {
 
 			// Create Request
 			w := httptest.NewRecorder()
-			req := httptest.NewRequest("GET", "/urls?" + tt.query, bytes.NewBufferString(""))
+			req := httptest.NewRequest("GET", "/urls?"+tt.query, bytes.NewBufferString(""))
 
 			// Make Request
 			r.ServeHTTP(w, req)
