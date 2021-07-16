@@ -16,7 +16,7 @@ type URL struct {
 	// Expiration time
 	ExpiredAt time.Time `json:"expiredAt" bson:"expiredAt" format:"yyyy-MM-ddThh:mm:ss.ZZZ" example:"2021-06-09T09:29:18.169Z"`
 	// Id of owner
-	Owner primitive.ObjectID `json:"owner" bson:"owner" format:"hexidecimal string" example:"6095872d75ff40c9238bdb29"`
+	Owner primitive.ObjectID `json:"owner" bson:"owner" format:"hexadecimal string" example:"6095872d75ff40c9238bdb29"`
 } // @name URL
 
 type URLCreate struct {
