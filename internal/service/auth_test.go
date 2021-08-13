@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-var commonErr = errors.New("error")
+var errDefault = errors.New("error")
 
 func mockAuthService(t *testing.T) (*AuthService, *mockRepo.MockUsers) {
 	t.Helper()
@@ -24,9 +24,9 @@ func mockAuthService(t *testing.T) (*AuthService, *mockRepo.MockUsers) {
 	defer mockCtl.Finish()
 
 	usersRepo := mockRepo.NewMockUsers(mockCtl)
-	authManager, _ := auth.NewManager("key")
+	authManager, _ := auth.NewJWTManager("key")
 
-	service := newAuthService(usersRepo, hash.NewSHA1Hasher(""), authManager, time.Duration(1)*time.Hour)
+	service := newAuthService(usersRepo, hash.NewSHA1PasswordHasher(""), authManager, time.Duration(1)*time.Hour)
 
 	return service, usersRepo
 }
@@ -49,7 +49,7 @@ func TestAuthService_Login(t *testing.T) {
 	ctx := context.Background()
 
 	usersRepo.EXPECT().GetByCredentials(ctx, gomock.Any(), gomock.Any()).Return(domain.User{}, nil)
-	usersRepo.EXPECT().UpdateLastLogin(ctx, gomock.Any(), gomock.Any()).Return(nil)
+	usersRepo.EXPECT().UpdateLastLogin(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 
 	res, err := service.Login(ctx, domain.UserLogin{})
 
@@ -74,7 +74,7 @@ func TestAuthService_LoginErr(t *testing.T) {
 
 	ctx := context.Background()
 
-	usersRepo.EXPECT().GetByCredentials(ctx, gomock.Any(), gomock.Any()).Return(domain.User{}, commonErr)
+	usersRepo.EXPECT().GetByCredentials(ctx, gomock.Any(), gomock.Any()).Return(domain.User{}, errDefault)
 
 	_, err := service.Login(ctx, domain.UserLogin{})
 

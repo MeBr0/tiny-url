@@ -1,4 +1,4 @@
-# Tiny URL ![master](https://github.com/mebr0/tiny-url/actions/workflows/master.yml/badge.svg)
+# Tiny URL ![master](https://github.com/mebr0/tiny-url/actions/workflows/master.yml/badge.svg) [![Go Report Card](https://goreportcard.com/badge/github.com/mebr0/tiny-url)](https://goreportcard.com/report/github.com/mebr0/tiny-url)
 
 Service for shortening URL by providing special aliases, which will redirect
 to actual URL. Similar services: [tiny-url], [bit-ly], [short-url], etc

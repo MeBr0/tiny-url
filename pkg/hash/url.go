@@ -14,14 +14,14 @@ type URLEncoder interface {
 	Encode(url string, userId primitive.ObjectID, start int, length int) (string, error)
 }
 
-type MD5Encoder struct {
+type MD5URLEncoder struct {
 }
 
-func NewMD5Encoder() *MD5Encoder {
-	return &MD5Encoder{}
+func NewMD5URLEncoder() *MD5URLEncoder {
+	return &MD5URLEncoder{}
 }
 
-func (e *MD5Encoder) Encode(url string, userId primitive.ObjectID, start int, length int) (string, error) {
+func (e *MD5URLEncoder) Encode(url string, userId primitive.ObjectID, start int, length int) (string, error) {
 	hasher := md5.New()
 
 	_, err := hasher.Write([]byte(url + userId.Hex()))

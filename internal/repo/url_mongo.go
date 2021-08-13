@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 type URLsRepo struct {
@@ -23,6 +24,28 @@ func (r *URLsRepo) ListByOwner(ctx context.Context, userId primitive.ObjectID) (
 	urls := make([]domain.URL, 0)
 
 	cur, err := r.db.Find(ctx, bson.M{"owner": userId})
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = cur.All(ctx, &urls)
+
+	return urls, err
+}
+
+func (r *URLsRepo) ListByOwnerAndExpiration(ctx context.Context, userId primitive.ObjectID, expired bool) ([]domain.URL, error) {
+	urls := make([]domain.URL, 0)
+
+	var op string
+
+	if expired {
+		op = "$lt"
+	} else {
+		op = "$gte"
+	}
+
+	cur, err := r.db.Find(ctx, bson.M{"owner": userId, "expiredAt": bson.M{op: time.Now()}})
 
 	if err != nil {
 		return nil, err
@@ -73,6 +96,14 @@ func (r *URLsRepo) GetByOriginalAndOwner(ctx context.Context, original string, o
 	}
 
 	return url, nil
+}
+
+func (r *URLsRepo) Prolong(ctx context.Context, alias string, toProlong domain.URLProlong) error {
+	updateQuery := bson.M{"expiredAt": time.Now().Add(time.Duration(toProlong.Duration) * time.Second)}
+
+	_, err := r.db.UpdateByID(ctx, alias, bson.M{"$set": updateQuery})
+
+	return err
 }
 
 func (r *URLsRepo) Delete(ctx context.Context, alias string) error {

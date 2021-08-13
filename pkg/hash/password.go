@@ -9,17 +9,17 @@ type PasswordHasher interface {
 	Hash(password string) (string, error)
 }
 
-// SHA1Hasher uses SHA1 to hash passwords with provided salt
-type SHA1Hasher struct {
+// SHA1PasswordHasher uses SHA1 to hash passwords with provided salt
+type SHA1PasswordHasher struct {
 	salt string
 }
 
-func NewSHA1Hasher(salt string) *SHA1Hasher {
-	return &SHA1Hasher{salt: salt}
+func NewSHA1PasswordHasher(salt string) *SHA1PasswordHasher {
+	return &SHA1PasswordHasher{salt: salt}
 }
 
 // Hash creates SHA1 hash of given password
-func (h *SHA1Hasher) Hash(password string) (string, error) {
+func (h *SHA1PasswordHasher) Hash(password string) (string, error) {
 	hash := sha1.New()
 
 	_, err := hash.Write([]byte(password))

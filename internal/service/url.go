@@ -9,6 +9,7 @@ import (
 	"github.com/mebr0/tiny-url/pkg/hash"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
 )
 
 type URLsService struct {
@@ -32,51 +33,24 @@ func newURLsService(repo repo.URLs, cache cache.URLs, urlEncoder hash.URLEncoder
 }
 
 func (s *URLsService) ListByOwner(ctx context.Context, userId primitive.ObjectID) ([]domain.URL, error) {
-	urls, err := s.repo.ListByOwner(ctx, userId)
+	return s.repo.ListByOwner(ctx, userId)
+}
 
-	if err != nil {
-		return nil, err
-	}
-
-	// Delete all expired URLs
-	oneExpired := false
-
-	for _, url := range urls {
-		if url.Expired() {
-			oneExpired = true
-
-			if err := s.repo.Delete(ctx, url.Alias); err != nil {
-				log.Warn("Could not delete from database " + err.Error())
-			}
-		}
-	}
-
-	// Query again if one expired
-	if oneExpired {
-		return s.repo.ListByOwner(ctx, userId)
-	}
-
-	return urls, nil
+func (s *URLsService) ListByOwnerAndExpiration(ctx context.Context, userId primitive.ObjectID, expired bool) ([]domain.URL, error) {
+	return s.repo.ListByOwnerAndExpiration(ctx, userId, expired)
 }
 
 func (s *URLsService) Create(ctx context.Context, toCreate domain.URLCreate) (domain.URL, error) {
 	// Get URL from database
-	url, err := s.repo.GetByOriginalAndOwner(ctx, toCreate.Original, toCreate.Owner)
+	_, err := s.repo.GetByOriginalAndOwner(ctx, toCreate.Original, toCreate.Owner)
 
 	// If other error than not found return it
 	if err != nil && err != repo.ErrURLNotFound {
 		return domain.URL{}, err
 	}
 
-	// If URL expired delete it
-	if err == nil && url.Expired() {
-		if err := s.repo.Delete(ctx, url.Alias); err != nil {
-			log.Warn("Could not delete from database " + err.Error())
-		}
-	}
-
 	// If URL exists return error
-	if err == nil && !url.Expired() {
+	if err == nil {
 		return domain.URL{}, repo.ErrURLAlreadyExists
 	}
 
@@ -151,29 +125,74 @@ func (s *URLsService) Get(ctx context.Context, alias string) (domain.URL, error)
 		return domain.URL{}, err
 	}
 
-	// If URL expired delete it from database and cache
-	if url.Expired() {
-		go func() {
-			if err := s.cache.Delete(ctx, url.Alias); err != nil {
-				log.Warn("Could not delete from cache " + err.Error())
-			}
-		}()
-
-		go func() {
-			if err := s.repo.Delete(ctx, url.Alias); err != nil {
-				log.Warn("Could not delete from database " + err.Error())
-			}
-		}()
-
-		return domain.URL{}, ErrURLExpired
-	}
-
-	// Put valid URL to cache
+	// Async update cache
 	go func() {
-		if err := s.cache.Set(ctx, url); err != nil {
+		c, cancel := context.WithTimeout(context.Background(), time.Duration(5) * time.Second)
+		defer cancel()
+
+		if err := s.cache.Set(c, url); err != nil {
 			log.Warn("Could not save to cache " + err.Error())
 		}
 	}()
 
 	return url, nil
+}
+
+func (s *URLsService) GetByOwner(ctx context.Context, alias string, owner primitive.ObjectID) (domain.URL, error) {
+	url, err := s.Get(ctx, alias)
+
+	if err != nil {
+		return domain.URL{}, err
+	}
+
+	// If owners do not match, return forbidden
+	if url.Owner != owner {
+		return domain.URL{}, ErrURLForbidden
+	}
+
+	return url, nil
+}
+
+func (s *URLsService) Prolong(ctx context.Context, alias string, owner primitive.ObjectID, toProlong domain.URLProlong) (domain.URL, error) {
+	if _, err := s.GetByOwner(ctx, alias, owner); err != nil {
+		return domain.URL{}, err
+	}
+
+	if err := s.repo.Prolong(ctx, alias, toProlong); err != nil {
+		return domain.URL{}, err
+	}
+
+	// Async update cache
+	go func() {
+		c, cancel := context.WithTimeout(context.Background(), time.Duration(5) * time.Second)
+		defer cancel()
+
+		if err := s.cache.Delete(c, alias); err != nil {
+			log.Warn("Could not delete from cache " + err.Error())
+		}
+	}()
+
+	return s.GetByOwner(ctx, alias, owner)
+}
+
+func (s *URLsService) Delete(ctx context.Context, alias string, owner primitive.ObjectID) error {
+	if _, err := s.GetByOwner(ctx, alias, owner); err != nil {
+		return err
+	}
+
+	if err := s.repo.Delete(ctx, alias); err != nil {
+		return err
+	}
+
+	// Async update cache
+	go func() {
+		c, cancel := context.WithTimeout(context.Background(), time.Duration(5) * time.Second)
+		defer cancel()
+
+		if err := s.cache.Delete(c, alias); err != nil {
+			log.Warn("Could not delete from cache " + err.Error())
+		}
+	}()
+
+	return nil
 }

@@ -7,7 +7,7 @@ import (
 
 type User struct {
 	// Unique id
-	ID primitive.ObjectID `json:"id" bson:"_id,omitempty" format:"hexidecimal string" example:"6095872d75ff40c9238bdb29"`
+	ID primitive.ObjectID `json:"id" bson:"_id,omitempty" format:"hexadecimal string" example:"6095872d75ff40c9238bdb29"`
 	// First name
 	Name string `json:"name" bson:"name" example:"Sirius"`
 	// Unique email
