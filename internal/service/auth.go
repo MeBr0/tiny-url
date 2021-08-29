@@ -66,7 +66,7 @@ func (s *AuthService) Login(ctx context.Context, toLogin domain.UserLogin) (doma
 	// Async update last login
 	if err == nil {
 		go func() {
-			c, cancel := context.WithTimeout(context.Background(), time.Duration(5) * time.Second)
+			c, cancel := context.WithTimeout(context.Background(), time.Duration(5)*time.Second)
 			defer cancel()
 
 			if err := s.repo.UpdateLastLogin(c, user.ID, time.Now()); err != nil {

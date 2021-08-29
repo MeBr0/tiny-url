@@ -1,18 +1,19 @@
 # Multistage dockerfile for building docker images on non-unix systems
 #
 # Build image:
-# docker build -f build/Dockerfile.multi -t tiny-url .
+# docker build -f build/Dockerfile.multi -t mebr0/tiny-url .
 #
 # Run container by passing env variables by flag -e (list of env variables in README.md):
-# docker run -p 8080:8080 tiny-url:latest
+# docker run -p 8080:8080 mebr0/tiny-url:latest
 #
 # Build binary in separate docker container with golang
 FROM golang:1.15-alpine3.12 AS builder
 
+WORKDIR /root/
+
 RUN go version
 
-COPY . /github.com/mebr0/tiny-url/
-WORKDIR /github.com/mebr0/tiny-url/
+COPY . .
 
 RUN go get github.com/swaggo/swag/cmd/swag
 RUN swag init -g internal/app/app.go
@@ -20,11 +21,15 @@ RUN swag init -g internal/app/app.go
 RUN go mod download
 RUN GOOS=linux go build -ldflags="-w -s" -v -o app ./cmd/app/main.go
 
+RUN ls
+
 # Transfer artifacts from builder stage to clean alpine container
 FROM alpine:latest
 
-COPY --from=builder /github.com/mebr0/tiny-url/app .
-COPY --from=builder /github.com/mebr0/tiny-url/configs configs/
+WORKDIR /root/
+
+COPY --from=builder /root/app .
+COPY --from=builder /root/configs ./configs/
 
 EXPOSE 8080
 

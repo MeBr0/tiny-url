@@ -1,0 +1,9 @@
+# Github actions
+.github
+
+# Ignore files
+.dockerignore
+.gitignore
+
+# Markdowns
+*.md
