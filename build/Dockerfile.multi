@@ -21,13 +21,15 @@ RUN swag init -g internal/app/app.go
 RUN go mod download
 RUN GOOS=linux go build -ldflags="-w -s" -v -o app ./cmd/app/main.go
 
+RUN ls
+
 # Transfer artifacts from builder stage to clean alpine container
 FROM alpine:latest
 
 WORKDIR /root/
 
-COPY --from=builder app .
-COPY --from=builder configs ./configs/
+COPY --from=builder /root/app .
+COPY --from=builder /root/configs ./configs/
 
 EXPOSE 8080
 
