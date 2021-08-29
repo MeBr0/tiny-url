@@ -127,7 +127,7 @@ func (s *URLsService) Get(ctx context.Context, alias string) (domain.URL, error)
 
 	// Async update cache
 	go func() {
-		c, cancel := context.WithTimeout(context.Background(), time.Duration(5) * time.Second)
+		c, cancel := context.WithTimeout(context.Background(), time.Duration(5)*time.Second)
 		defer cancel()
 
 		if err := s.cache.Set(c, url); err != nil {
@@ -164,7 +164,7 @@ func (s *URLsService) Prolong(ctx context.Context, alias string, owner primitive
 
 	// Async update cache
 	go func() {
-		c, cancel := context.WithTimeout(context.Background(), time.Duration(5) * time.Second)
+		c, cancel := context.WithTimeout(context.Background(), time.Duration(5)*time.Second)
 		defer cancel()
 
 		if err := s.cache.Delete(c, alias); err != nil {
@@ -186,7 +186,7 @@ func (s *URLsService) Delete(ctx context.Context, alias string, owner primitive.
 
 	// Async update cache
 	go func() {
-		c, cancel := context.WithTimeout(context.Background(), time.Duration(5) * time.Second)
+		c, cancel := context.WithTimeout(context.Background(), time.Duration(5)*time.Second)
 		defer cancel()
 
 		if err := s.cache.Delete(c, alias); err != nil {
