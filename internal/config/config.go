@@ -97,7 +97,7 @@ func (c *Config) readEnv() {
 // Load values from .env file to system
 func loadFromEnvFile() {
 	if err := godotenv.Load(); err != nil {
-		log.Debug("Error loading .env file")
+		log.Fatal("Error loading .env file")
 	}
 }
 
