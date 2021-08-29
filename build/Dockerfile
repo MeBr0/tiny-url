@@ -17,7 +17,8 @@ FROM alpine:latest
 
 WORKDIR /root/
 
-COPY . .
+COPY app .
+COPY configs/ ./configs/
 
 EXPOSE 8080
 
